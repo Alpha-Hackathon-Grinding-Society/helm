@@ -1,0 +1,10 @@
+{
+  "pool": "0xd0b53D9277642d899DF5C87A3966A349A798F224",
+  "from_block": 51010865,
+  "last_block": 58219009,
+  "last_synced_at": 1794834176,
+  "bars": 6694,
+  "block_time_sec": 0.2,
+  "days": 45,
+  "bucket_sec": 900
+}
