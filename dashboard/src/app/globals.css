@@ -1,0 +1,811 @@
+/*
+ * Helm's visual system.
+ *
+ * The interface is a report on a system that makes money decisions without asking
+ * permission, so it is built like an instrument panel: dense, numeric, and explicit
+ * about where each number came from. There are no gradients, no glow and no decorative
+ * motion. Every colour carries meaning:
+ *
+ *   --ink          the base text
+ *   --lp           the liquidity position
+ *   --lending      the lending position
+ *   --clamp        the contract changed the model's number
+ *   --veto         the contract refused the trade
+ *   --live         something that was read from a chain just now
+ *
+ * The palette is deliberately close to greyscale so that the two colours that carry
+ * meaning (amber for "the contract changed this", red for "the contract refused this")
+ * are the only saturated things on the page. A judge scanning the cycle log should see
+ * the clamps before they read a word.
+ */
+
+:root {
+  --bg: #0b0d10;
+  --bg-raised: #12151a;
+  --bg-sunken: #080a0c;
+  --line: #232830;
+  --line-strong: #333a45;
+
+  --ink: #e8eaed;
+  --ink-dim: #9aa3af;
+  --ink-faint: #646d7a;
+
+  --lp: #4a9eff;
+  --lp-dim: #1d3f66;
+  --lending: #6fbf8b;
+  --lending-dim: #22412f;
+  --clamp: #e0a340;
+  --clamp-dim: #4a3717;
+  --veto: #e06c5c;
+  --veto-dim: #4a2420;
+
+  --radius: 3px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --font-ui: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo, Consolas, monospace;
+
+  --max-width: 1180px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--lp);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--lp);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------- typography */
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+p {
+  margin: 0;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dim {
+  color: var(--ink-dim);
+}
+
+.faint {
+  color: var(--ink-faint);
+}
+
+.small {
+  font-size: 13px;
+}
+
+.tiny {
+  font-size: 11px;
+}
+
+/* ---------------------------------------------------------------- layout */
+
+.shell {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-4) var(--space-7);
+}
+
+.masthead {
+  border-bottom: 1px solid var(--line);
+  padding: var(--space-5) 0 var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.masthead-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.wordmark h1 {
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.wordmark .tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tagline {
+  color: var(--ink-dim);
+  font-size: 14px;
+  max-width: 62ch;
+  margin-top: var(--space-2);
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-4);
+}
+
+.nav a {
+  font-size: 13px;
+  color: var(--ink-dim);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+}
+
+.nav a:hover {
+  color: var(--ink);
+  background: var(--bg-raised);
+  text-decoration: none;
+}
+
+.nav a[aria-current="page"] {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  background: var(--bg-raised);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 860px) {
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+/* ---------------------------------------------------------------- panels */
+
+.panel {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-body {
+  padding: var(--space-4);
+}
+
+.panel-body.flush {
+  padding: 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 20px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.stat-note {
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+/* ---------------------------------------------------------------- the split bar */
+
+/*
+ * The split bar is the interface's central idea: the model's raw number, the contract's
+ * envelope, and what actually happened, all in one strip. When the contract clamps, the
+ * part of the bar that was removed is drawn in the clamp colour, so the enforcement is
+ * visible before it is read.
+ */
+
+.split {
+  --lp-color: var(--lp);
+  position: relative;
+  height: 30px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.split-lp {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--lp-dim);
+  border-right: 1px solid var(--lp);
+}
+
+.split-lending {
+  position: absolute;
+  inset: 0 0 0 auto;
+  background: var(--lending-dim);
+}
+
+.split-proposed {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--clamp);
+}
+
+.split-final {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--ink);
+}
+
+.split-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.legend-key {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+  flex: none;
+}
+
+/* ---------------------------------------------------------------- tables */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+td.num,
+th.num {
+  text-align: right;
+}
+
+tr[data-clamped="true"] td {
+  background: rgba(224, 163, 64, 0.05);
+}
+
+/* ---------------------------------------------------------------- badges */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.badge.ok {
+  color: var(--lending);
+  border-color: var(--lending-dim);
+  background: rgba(111, 191, 139, 0.08);
+}
+
+.badge.clamp {
+  color: var(--clamp);
+  border-color: var(--clamp-dim);
+  background: rgba(224, 163, 64, 0.08);
+}
+
+.badge.veto {
+  color: var(--veto);
+  border-color: var(--veto-dim);
+  background: rgba(224, 108, 92, 0.08);
+}
+
+.badge.live {
+  color: var(--lp);
+  border-color: var(--lp-dim);
+  background: rgba(74, 158, 255, 0.08);
+}
+
+/* ---------------------------------------------------------------- notes */
+
+.note {
+  border-left: 2px solid var(--line-strong);
+  padding: var(--space-2) 0 var(--space-2) var(--space-3);
+  color: var(--ink-dim);
+  font-size: 13px;
+}
+
+.note.warn {
+  border-left-color: var(--clamp);
+}
+
+.note.error {
+  border-left-color: var(--veto);
+}
+
+.note strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.prose {
+  max-width: 72ch;
+  color: var(--ink-dim);
+  font-size: 14px;
+}
+
+.prose p + p {
+  margin-top: var(--space-3);
+}
+
+.prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.prose code,
+code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 1px 4px;
+}
+
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  overflow-x: auto;
+  margin: var(--space-3) 0;
+}
+
+/* ---------------------------------------------------------------- states */
+
+.state {
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 14px;
+}
+
+.state-title {
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton {
+  background: var(--line);
+  animation: pulse 1.6s ease-in-out infinite;
+  border-radius: 2px;
+  height: 14px;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------- chain links */
+
+.chain-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.chain-link:hover {
+  color: var(--lp);
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: minmax(140px, auto) 1fr;
+  gap: var(--space-2) var(--space-4);
+  font-size: 13px;
+}
+
+.kv dt {
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding-top: 2px;
+}
+
+.kv dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+
+/* ---------------------------------------------------------------- chart */
+
+.chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.chart-axis {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.chart-grid {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.chart-label {
+  fill: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.chart-line {
+  fill: none;
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.footer {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+  color: var(--ink-faint);
+  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+
+/* ---------------------------------------------------------------- the clamped band */
+
+/*
+ * The part of the model's proposal the contract removed. It is drawn as a solid amber
+ * band rather than a pattern so the colour stays the signal.
+ */
+
+.split-clamp {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(224, 163, 64, 0.22);
+  border-left: 1px solid var(--clamp);
+  border-right: 1px solid var(--clamp);
+}
+
+.split-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line-strong);
+}
+
+/* ---------------------------------------------------------------- hero */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+.hero-title {
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-3);
+}
+
+.hero-sub {
+  color: var(--ink-dim);
+  font-size: 15px;
+  max-width: 58ch;
+}
+
+.hero-sub strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- sections */
+
+.section {
+  margin-top: var(--space-6);
+}
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+/* ---------------------------------------------------------------- status */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lending);
+  flex: none;
+}
+
+.status-dot.warn {
+  background: var(--clamp);
+}
+
+.status-dot.bad {
+  background: var(--veto);
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  line-height: 1.2;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.button:hover {
+  background: var(--line);
+  text-decoration: none;
+}
+
+.button.primary {
+  border-color: var(--lp-dim);
+  color: var(--lp);
+}
+
+.veto-text {
+  color: var(--veto);
+}
+
+/* ---------------------------------------------------------------- lists */
+
+.plain-list {
+  margin: 0;
+  padding-left: var(--space-4);
+  color: var(--ink-dim);
+  font-size: 14px;
+}
+
+.plain-list li + li {
+  margin-top: var(--space-2);
+}
+
+.plain-list strong {
+  color: var(--ink);
+  font-weight: 600;
+}
