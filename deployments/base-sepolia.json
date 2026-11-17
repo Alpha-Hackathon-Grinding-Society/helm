@@ -1,0 +1,32 @@
+{
+  "chainId": 84532,
+  "chain": "Base Sepolia",
+  "rpc": "https://base-sepolia-rpc.publicnode.com",
+  "explorer": "https://sepolia.basescan.org",
+  "deployer": "0x7225cC8352e80d402E83828EAdBC80767C04d222",
+  "agent": "0x26127Ee61ECE6C105B575eD3296C5698323F029A",
+  "token": "0x51555FB414931F12Dc5d14E4cF02d09E7e663730",
+  "lpPool": "0xa2e8273C708C77faFb13867e2406AF87Ee13A12a",
+  "lendingPool": "0x49e57e791A9dd7b12F74c6767A8845156Fa0c1ed",
+  "vault": "0x9ED8FAD6627B89104b5a5C2C31334168Ce73EB77",
+  "callbackProxy": "0x476F44b11F5C942c58f4c8E3d0300E5710743585",
+  "limits": {
+    "lpShareMinBps": 0,
+    "lpShareMaxBps": 4000,
+    "rangeWidthMinBps": 500,
+    "rangeWidthMaxBps": 4000,
+    "cooldownSec": 20,
+    "volExitLevelBps": 1200,
+    "minTradeBps": 1000,
+    "freshnessSec": 600
+  },
+  "reactive": {
+    "network": "Reactive Lasna",
+    "chainId": 5318007,
+    "rpc": "https://lasna-rpc.rnk.dev",
+    "explorer": "https://lasna.reactscan.net/",
+    "address": "0xf24f1d13F995a2368015868048F791426AfeD39C",
+    "cronTopic": "0xe20b31294d84c3661ddc8f423abb9c70310d0cf172aa2714ead78029b325e3f4",
+    "systemContract": "0x8888888888888888888888888888888888888888"
+  }
+}

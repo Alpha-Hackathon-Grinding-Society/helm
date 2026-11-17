@@ -1,0 +1,802 @@
+[
+  {
+    "index": 0,
+    "timestamp": 1790382600,
+    "priceE18": 2000000000000000000000,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xc49202e51b6e32174da588de41b9a844e3c9636ef44494ff05d445611c5f23be",
+    "swapTx": "0xa14cc5ca4925ccc8bc33982b67315e7fc69905468c899953b27e4f621075cd60",
+    "setRateTx": "0x90c4a8a030b8286b56b81b198f2e1d98a2a29c5d8ac193a51e202fbcf97d924d"
+  },
+  {
+    "index": 1,
+    "timestamp": 1790383500,
+    "priceE18": 2001477492706425962496,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xf70d0666339a33a43430e9ccefd081cc04d83b7912e5ad0be18f4e06e35e03d5",
+    "swapTx": "0xcec6f17aa535e19d57867e58056ead1cac393a589113cc55f3f60142de8f1116",
+    "setRateTx": "0xfebbf37c4de6c3758019cf1cabd0d10f73c9a0a80ac64e7ebbdd5085036940dc"
+  },
+  {
+    "index": 2,
+    "timestamp": 1790384400,
+    "priceE18": 2002898006238325899264,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x791b39ca5a6f00299bcecaaa32766964f0860e13cdc4daab29f82c567e3c44b3",
+    "swapTx": "0x7d662d8d68fd8cc2ca690d558d1bf4530832a19c12b2ffb545093428c01259c6",
+    "setRateTx": "0x18b672bb0c1a07b1c21fac791106ca3e06a5e4e6193df60d8955b9f59746a497"
+  },
+  {
+    "index": 3,
+    "timestamp": 1790385300,
+    "priceE18": 2003197730054641811456,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xcbd65c912c6288adf7b50963335728f8d4a9cc0234ee5a6d2393616ca571f147",
+    "swapTx": "0xc18b57dbb1f53f0dfa5f8a22f64eefe37b47ec72df55aa0600248900381c2f6b",
+    "setRateTx": "0x7b29fab5a3b4c40c2900760a42b9863734bf19cb42069e4ce31111c12289f1a6"
+  },
+  {
+    "index": 4,
+    "timestamp": 1790386200,
+    "priceE18": 2006877615138762653696,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x883268fe572269dedcb67eed66123d131d62fa3ce350d50f388092dbef19b7e2",
+    "swapTx": "0x3ec3ec163ecd622e270ab7b6ffb270ad07664f0d07ab3f04675c06a7bcfc19f4",
+    "setRateTx": "0x1a557da8e7fa0b7117be3589a052406039ddae1bb27b810979b2ce1a11b8a339"
+  },
+  {
+    "index": 5,
+    "timestamp": 1790387100,
+    "priceE18": 2005335355171686055936,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x4388fabef3c47620acd2219922ceeb24a7dc2c0ca639f1075e666f060e6df2a8",
+    "swapTx": "0xa16a0eb27e119ba63bc3d542b56c4c1b4621284da1b3245b1d99d185a6d61e50",
+    "setRateTx": "0x4f483c7dccbe5c870425b7c95ba16c5f74ba45086f7e9b2e50672673dad0d5c6"
+  },
+  {
+    "index": 6,
+    "timestamp": 1790388000,
+    "priceE18": 2006421600275670237184,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xc82c00121df6140e283c70e814d00faefe9a4a492886251d28078cb12725df47",
+    "swapTx": "0x298b2c0623accd3c030705354293ff545b9d934fd3e2e0bb0cc4a2a021ee4a6f",
+    "setRateTx": "0xf9bc430c615b06770c0e6715ac18acb405ecb395fef64ce22b89d57a97969c8c"
+  },
+  {
+    "index": 7,
+    "timestamp": 1790388900,
+    "priceE18": 2006450917432161468416,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xc58c4a560b7d62f6612d4e08e13c8f67d89f0e239ca6d8798999e39672c172c1",
+    "swapTx": "0xfa55c3f02bc3f74a8af095d71065ba4dbe2d1493686faa528f99e3711f79fe0e",
+    "setRateTx": "0xeeae7d66677bf463fd2b450f085ec9a337b50f3e7fadf07c1a08780b405954d1"
+  },
+  {
+    "index": 8,
+    "timestamp": 1790389800,
+    "priceE18": 2005261581065661710336,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x1ceadb427aada219eebf6d3ffed2f2d00aea444c9b2e325cd29eb0d412d79fd5",
+    "swapTx": "0x826578a4ec7af926ac349f164e94d46f91d1571efd3b176b68488b73e0159c1b",
+    "setRateTx": "0xef5c192c16536ec97b65f8ccc9259d3bff5da3cdbff6ae3cec14acf31b8ac311"
+  },
+  {
+    "index": 9,
+    "timestamp": 1790390700,
+    "priceE18": 2004825950361020530688,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x7af92d20edd79376145cfc93f89e7443ef229246daf8446e49aca2bb234218d1",
+    "swapTx": "0x29ca4dfc36dca4b86858417f34e582f303253938f5c623a5df1047bf72b98750",
+    "setRateTx": "0x012411df0e016b0e42dc1bcaadae28829a0946a4a17849e2f72aeaf1da6d135a"
+  },
+  {
+    "index": 10,
+    "timestamp": 1790391600,
+    "priceE18": 2001350770084952145920,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xfa00ef4910f70d5a12c736e40e834be6bb63d140f90b328edc60e38ed818b1ad",
+    "swapTx": "0x40984c4242690b1febea03701fadb542d345c22628c690ab6fca8d858cf9afe6",
+    "setRateTx": "0x13c1f2d3a33e33461bbf53b4b09d13f4357215d1777b2bfad60470f917ac1e9e"
+  },
+  {
+    "index": 11,
+    "timestamp": 1790392500,
+    "priceE18": 2003245092716578078720,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x79dd625f535fb5adbbe7c4019a21db52a244ebdbd66ea82dc26ae80a3779b5fc",
+    "swapTx": "0xfcce5aa90ef1efd73ede4dc4eb36658ce40d6c949652d24259cbcf24afbc8f9c",
+    "setRateTx": "0x89af237eae9c48b83ce3ae6fd26eca4915315448a99c44e849bf726891dc45c3"
+  },
+  {
+    "index": 12,
+    "timestamp": 1790393400,
+    "priceE18": 2002963031463175651328,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xaa23f1f69fd577e6e6271430ff10c996d19c9db98ecc92c18dacf07f0f06e8c5",
+    "swapTx": "0xb1aea4dc92b538fde404fc5f59e1ac96d194bdaa705724a43ba24558485820ba",
+    "setRateTx": "0x81ac3ebabac98a7d6650a601c3b75ced3229a10fc0670a6fe885d42086de1002"
+  },
+  {
+    "index": 13,
+    "timestamp": 1790394300,
+    "priceE18": 2001454585249710473216,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x0f6ac39cbb0d55d21b9e812f6a9995fb7ac64563a64093c35805d654af817cb4",
+    "swapTx": "0x0ce83a43f94023987272f8930964ad9ea6a14b405f40dcdafb6fda71a794212b",
+    "setRateTx": "0xd9dc9d5211a5e220df9645cffc4f608e2e40cb681ca79920132e4024c98ab840"
+  },
+  {
+    "index": 14,
+    "timestamp": 1790395200,
+    "priceE18": 2002391870635622006784,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x0f6a19b9c0d1bb06305e964fc485dfc4e003b32301030fa93728402687fe2213",
+    "swapTx": "0x80cc0e239dd806febbfd505ad1fe6f42aaff94397f3b896b24728b35b529a31a",
+    "setRateTx": "0xf9cec2ce386f42bbfe36284b6a648e0553fb514fd6d592ec58e6327848fef3d7"
+  },
+  {
+    "index": 15,
+    "timestamp": 1790396100,
+    "priceE18": 2001492925913343197184,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x6ce5e6832d6d8c3744a8771e7ee9439a389f987b9c2a95d9b11667c2bc476516",
+    "swapTx": "0x6cf302db5e8b70695eef5d5b0ef04f27bec75367cc60dff4f122df207e6c7764",
+    "setRateTx": "0xf2d71b710da5802b945d9cd6b43524cbc16588f661a2aef5e5715a5a79769bf5"
+  },
+  {
+    "index": 16,
+    "timestamp": 1790397000,
+    "priceE18": 2002137311284856881152,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x4a3eeac880d929f5ca6a551043239cc4a0680a941cdb6a8fc7a1e484f5c94495",
+    "swapTx": "0xd81795499c4db9954a04edf6265fe4926152f4c77e1ac1d16ddc4b471b99d606",
+    "setRateTx": "0xe429f34cba9c324107f53ea898b24fc64aaac5bc115ff69e0a33fe4ef63d5e45"
+  },
+  {
+    "index": 17,
+    "timestamp": 1790397900,
+    "priceE18": 2002316102941872488448,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x9f03724c222bef1337838ff75aa399f74ec818163937a12352e6544193c93f57",
+    "swapTx": "0xde499a7057eecf2d7585bae881d8a053497dc5dedde81dfb31e18b15af646551",
+    "setRateTx": "0xc1753c6f2f1c00a1e8a69f286563b8c1ae096cc43229b93eca382bc4513ccb49"
+  },
+  {
+    "index": 18,
+    "timestamp": 1790398800,
+    "priceE18": 2001812608335596486656,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xae5387c8bcbc50423e0fb0708f1c83c2a816afd405311b3fe871818cbca59ef9",
+    "swapTx": "0x62a606685a63ab9fb0f302c92f1ebf633ae5c65ec58995a1644f7f425f1a4196",
+    "setRateTx": "0x01fb2e76f4cdc9ecc422e59a287d4547ba378c2511d8e6f74080e9208815d153"
+  },
+  {
+    "index": 19,
+    "timestamp": 1790399700,
+    "priceE18": 2002481962644979056640,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xc1243066efcbea0372b6c4be90fb10e624fe6432ca0a868c07494f1f44394f95",
+    "swapTx": "0x4add9197ec36b623d0bb65111f93ca72c7b4cc61f64f7de4592a069422dd3528",
+    "setRateTx": "0x6687f2f15a8bf63157f74463bd0a57bd27cc1ddd895d7ff46e854b337fe9e6dc"
+  },
+  {
+    "index": 20,
+    "timestamp": 1790400600,
+    "priceE18": 2001440179678098489344,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x22ff427bb779d9f8abe8998b288ee515accf57e2e5af6cc5038aab274f4b4460",
+    "swapTx": "0x9d4215ab3db8cebbe7efa34a156256a4c11fb95d977688cc8a1b671cbbf4edba",
+    "setRateTx": "0xb48209ff17182c6c9741b532d2c8369ff6637925a2e2b19d6067bf39ab700727"
+  },
+  {
+    "index": 21,
+    "timestamp": 1790401500,
+    "priceE18": 2000909791838067228672,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x62ab0dcaf009827de33abe96b5af1c90277b4f8d168030c009113f0472aefc0b",
+    "swapTx": "0x8847ecebdb39736e32485851857a10ff3d15a388b2b62960c2e8395636eb34f8",
+    "setRateTx": "0xbf175ee555cbdb94fb9b2c79b0b87303a9db354a0ff211d324d05ffdd23c8b6e"
+  },
+  {
+    "index": 22,
+    "timestamp": 1790402400,
+    "priceE18": 2000274626233958924288,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xedd6ec9b448637f68a1e2c66e484db4a6e8794db238a2cb56fae0320e66ecd9d",
+    "swapTx": "0x41f13e93fccca292d951e00727c1bae78a173932e0052028a525800f50ae98f5",
+    "setRateTx": "0x3458d5d32f0327b59e0e3a72aef939b68b00f5c6ef2f5a98b36aa0579a9129ed"
+  },
+  {
+    "index": 23,
+    "timestamp": 1790403300,
+    "priceE18": 1999640005921114685440,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x4f8bcf53e5e60319fbf53f30712811083ff2613b1b8ecffc3c990a47dd4d6e30",
+    "swapTx": "0x79c834cae66cb8a7659f2b8b753968ddedf14f1a154f59df16739658acefdcf2",
+    "setRateTx": "0xc0f47e385c8148255ba73084fd2da8d7f856f5b4ce22913d5a2c577b50e80763"
+  },
+  {
+    "index": 24,
+    "timestamp": 1790404200,
+    "priceE18": 1999845602135678648320,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x488180c052e8061080c7d4d87694d21d82daaec3d6b48a3108aad180d8c9dd10",
+    "swapTx": "0xe7df61a354240b402d2e445c41c2d2e6d5f8d353f49dcdf836271ed3d6518baf",
+    "setRateTx": "0xbbc7e5a408318d94f8bb8dc018856e45d5d9990eb60bf3d27dee11b2e9f4c288"
+  },
+  {
+    "index": 25,
+    "timestamp": 1790405100,
+    "priceE18": 2000133797229286653952,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xd306c1ce0e436850b8dab0d76177136f53d722e9d7c8523b7a8bcd05c0960809",
+    "swapTx": "0x325ad3129eb6e3b0a59162017a7414bdbce1067ac02cfe11bcb23e2f826eaefa",
+    "setRateTx": "0x36751f196e40877341ff412bb293415dbab25924bf52c514e7d9947da5874115"
+  },
+  {
+    "index": 26,
+    "timestamp": 1790406000,
+    "priceE18": 2003432958025025191936,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xedfea330b0ccf4211b3ffeea7576f5326a1d7b7ccaf3954985e24dc20c055f47",
+    "swapTx": "0xb1e04ed0e7632e8e5d8317baf11500d5df61c50fc7b7d873e98dc04853bfddec",
+    "setRateTx": "0xe6b6651e4343deaaaa0f8752ea8bcafdb5a4a75413869bf1b3158f11e7d4ce94"
+  },
+  {
+    "index": 27,
+    "timestamp": 1790406900,
+    "priceE18": 2003466695161934774272,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x6b27a0b34a4f92ecf2ba5649ad550673bba7b9b83ce5751e9cad2d6f7e1df23e",
+    "swapTx": "0x1374afd18778b6a4ac1e754fe8e7ad18e0934eab04d9ab1218cdf00243c7ffea",
+    "setRateTx": "0x7ffad83e10593c128b56133fbe0835052193c908614d6dda5c455d5ca234ed2d"
+  },
+  {
+    "index": 28,
+    "timestamp": 1790407800,
+    "priceE18": 2003809218362282868736,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x07797ebc07b5fab47c3c3ca97deab3407103b7228030206d4e48c365e5e50658",
+    "swapTx": "0x980e1b9015da8fc2c3a3f5e094de846398fb1c6c46e9ca46141e51d4315b2a40",
+    "setRateTx": "0x1e78026d3d0737d0287c166bcea555f8e4102661da8d65bcfdc1816f5e64ece3"
+  },
+  {
+    "index": 29,
+    "timestamp": 1790408700,
+    "priceE18": 2003891929698178695168,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xe7bf24a1878feac1b7d550f2ed664c951de98c67797dcd7e464d093701e25903",
+    "swapTx": "0xf2ae0591dff1b4411209b6b4a5377a1515b6c347779daaa367857eb1547ebd27",
+    "setRateTx": "0x6769b2d51fe9cefccc5c54026cc01e3f05d50ca5543b06c5b2c1b98ba370739d"
+  },
+  {
+    "index": 30,
+    "timestamp": 1790409600,
+    "priceE18": 2003233854852506583040,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x56c4855463faaa0309486b8c98d07de172a69bdf2b8a7bd49a147a83129caec9",
+    "swapTx": "0x91f87fdc902819fd7923c46785eef677ee233196253facf0dd47c016bdf620c2",
+    "setRateTx": "0x5a3fcec5607c7ba4f4eb8eee444b1bebd3e436285aa1c2db366eb0b9dd516226"
+  },
+  {
+    "index": 31,
+    "timestamp": 1790410500,
+    "priceE18": 2002607701989641682944,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xbd6d3d658a3239c90da37e00a9adeb24a7c6f32da0b69b16b9f318d304d2e816",
+    "swapTx": "0xccd251b0936b1384146d4e015b9701fb2afd4ebb5f1478ddb36cf4427aa3b4d2",
+    "setRateTx": "0xd93eae8bbab5e3a49e352ae8da76d2ada9ed68f73b5e587171958f943bd3072d"
+  },
+  {
+    "index": 32,
+    "timestamp": 1790411400,
+    "priceE18": 2006634578658649964544,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xdf6772a9e756291a7d972f78b84dd514a06e355e1b5ccb27eaad6739ddedb9e6",
+    "swapTx": "0x9d874ebeaa41d125128f2503ffd51e167dc9315fb61695b948e0c93f8cb52e6c",
+    "setRateTx": "0xc1a8587d22bf6431a6cc39e0764e725e759090f3c4bcc88253901e8c8d7f2933"
+  },
+  {
+    "index": 33,
+    "timestamp": 1790412300,
+    "priceE18": 2004508115886506246144,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xc57fe79f8f37504a47d382740649c9ab962c3d2e7ac15378ee57a3c817f6a304",
+    "swapTx": "0x08f4dd1c3948fd0d721691d61ecd623c8cad183c366765bfb9f62bc47871d9d1",
+    "setRateTx": "0x689bc4465a43c1363bf90afdb7d8c2b0a0973e5a1bc4fe0132326bbb16331e28"
+  },
+  {
+    "index": 34,
+    "timestamp": 1790413200,
+    "priceE18": 1998178724123318943744,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xe6d16de1008318c7287199c1bb9ddf35c68253fd4a9d7fb6a05f6f7e618c11d0",
+    "swapTx": "0xcde67e95bfb7e604648c286249da56e7dc7bb148f56cd6c86e50e426062a663e",
+    "setRateTx": "0x8857f4ae48db32342aefc9fdb5df4cab741ca26d9fad483f516235a68d30e8e4"
+  },
+  {
+    "index": 35,
+    "timestamp": 1790414100,
+    "priceE18": 1998108233368904138752,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x53c1488957b14649ade73e1325d026d93fae1802cc1786655def6863c9de303b",
+    "swapTx": "0xc84463896dcb3359187c4c3e40bd3c0a31f2561ec1cec3a865f3613e8afd388d",
+    "setRateTx": "0xea072a12d18dfc140db4c289c2d2eaaf748072b21e0e3139cbd913c9e611d960"
+  },
+  {
+    "index": 36,
+    "timestamp": 1790415000,
+    "priceE18": 1997318758732861276160,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x5d43c7f33e43174fc2cfa024fc2fe6f69e0cb0aab5b5502394b086956b9b39e4",
+    "swapTx": "0x468a9c3523bbdf6ac627bf7bc1a6f6e89e8442866fc578cef44dd315a911c219",
+    "setRateTx": "0x55b23e8a0874b3bd1eed892978dd5828176b02eb94c4c14be8ed2f5dddcea9fe"
+  },
+  {
+    "index": 37,
+    "timestamp": 1790415900,
+    "priceE18": 1997945524812042207232,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x26e372d73ceef075cde38393aad039c829e523c1ea3a4003a0b98dafd711e5be",
+    "swapTx": "0x8bdebfaf45288523fcdde58b11c82a490f7ea44cfebe8a9b9d2093b3545d97e2",
+    "setRateTx": "0x2fa0f76c4e434ff54c6b7239af45845a2c6144a0bebb2e1f3b1e735bb9e9e363"
+  },
+  {
+    "index": 38,
+    "timestamp": 1790416800,
+    "priceE18": 2001640686921404121088,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x0066301a7fc1486fa7071c942c0707123642b00242902420c52bcfbe23f73134",
+    "swapTx": "0x93070f6e3429be0d0e9f003db6f53cf4e97941efaf4b25d13673b57398629584",
+    "setRateTx": "0xf01d73fbaa9de077c745cfd6bbc3b8045439252ec13f5e747a0fe039268848ef"
+  },
+  {
+    "index": 39,
+    "timestamp": 1790417700,
+    "priceE18": 2002710282625325465600,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xbdff4be67f31bb8443e4c59fc04ef95c9bccb7599235983abf4898185ae52b01",
+    "swapTx": "0xb25765769841d05e49f0f908d54df47a7d2aa32f3ee846afe8b156d6b9e103c9",
+    "setRateTx": "0xbbc0d63b0121231a4052040bffdca7d5244fe43fb08e204f80869b9335b91471"
+  },
+  {
+    "index": 40,
+    "timestamp": 1790418600,
+    "priceE18": 5604685839511875223552,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x11895eac158b32944016948efd16b449bcc7f78ef59951549803a44c6a45a13a",
+    "swapTx": "0xb055b4c36526439700713d38a8e59fb2be5693de502e8eb0b968f5df2a9dd125",
+    "setRateTx": "0x26ae1895251cd116d81566abc1a814493a9cafa38c90e5f8931fbcdea1f6e739"
+  },
+  {
+    "index": 41,
+    "timestamp": 1790419500,
+    "priceE18": 2001332046365897785344,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x853162921dd0e2e13149df063aa131861ecfd08636857ae9a2895196ea4847fb",
+    "swapTx": "0x6b067c9167d9f0390e5573bcf16c95557824d15a4a409b0f525856c7d27cf16c",
+    "setRateTx": "0x2a8452e90198563c3765f07e80691106a06c5b72543d696d6e764cafbaf6a21d"
+  },
+  {
+    "index": 42,
+    "timestamp": 1790420400,
+    "priceE18": 2001335772125309435904,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xf0387f98863fa1152d3afcdc461fcf6d42a19f69ef4a35ee58ca5c94d16d6fbd",
+    "swapTx": "0xedcad631a900fa14396db69a4c5a452a71269efcc85745cb18380a8bc83b2292",
+    "setRateTx": "0x2df58bcd530199d3096c855f509ad940bc41e868881cd1c5f1a166e6e733c68a"
+  },
+  {
+    "index": 43,
+    "timestamp": 1790421300,
+    "priceE18": 2002868859331363209216,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x19134c691379423f9c249d550c8dd0eea5779a190e4a6564a102b5cbf81563e8",
+    "swapTx": "0xf8093823a5c876e63c17d3f52a0e4c84fc3498dbead34f625cc38b6ee5bd4dea",
+    "setRateTx": "0xa9ed4daac9ef099188317ff627e6d108d94220f8df0bc9bcdc27f75c594518ec"
+  },
+  {
+    "index": 44,
+    "timestamp": 1790422200,
+    "priceE18": 2003024374721372749824,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xf334e8724d8416e0715ac28a732baebb6380346eb68f63d1ea6d56ce54148b19",
+    "swapTx": "0x40d8632b4acd45decd7bc39dc6034998074bf095e5b4156c2bb53e2c00aa6c31",
+    "setRateTx": "0x990540e858c9167b6e55dc3f274c0b173811154998088734af06f75ba134c3d7"
+  },
+  {
+    "index": 45,
+    "timestamp": 1790423100,
+    "priceE18": 2002778012823057334272,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xe635c7af9ca58679282b7c660af72721a616a4535b5557ea9bc7ad0b5700d120",
+    "swapTx": "0x6bc939b28365c1884a7b89c51adb18c0289752b9c25071bed58ea3fac5ee7d4a",
+    "setRateTx": "0x2befa351856381d660ccb9ffb4dbd30d0db3029250a898a5f59d0d5b14f1293d"
+  },
+  {
+    "index": 46,
+    "timestamp": 1790424000,
+    "priceE18": 2002805769328733454336,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x45624ab3549cce52b9f1b7cc5cdea56ee0134eb14fbdc5271d922a1e24fc6d73",
+    "swapTx": "0x6c0a07d45c2a682a2710afd4199eba6f6bfc664133149f360b184392d41761ae",
+    "setRateTx": "0xeb6f2edea63e1d296f7aa71e81da71675e1f901687ee6d6bc3d33fdaf4e35095"
+  },
+  {
+    "index": 47,
+    "timestamp": 1790424900,
+    "priceE18": 2003669064132647976960,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xfa92119bf18acc09e5b1a7226ab6390c643e6b55b86bfa996078b42eab9000e3",
+    "swapTx": "0x2937e9285c6b85e9a932b87fa1598ba2db2417099578c47341e76b238cca7232",
+    "setRateTx": "0x80a9ba8d17a3e374391f51e6c68ec077f641243eece9f1c5a907605af1d3064e"
+  },
+  {
+    "index": 48,
+    "timestamp": 1790425800,
+    "priceE18": 2001571518930203443200,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x216aba1dcb390cd08ceb0161cf779ad7fa309f3f6324aff24cf0da5ec0af9f9e",
+    "swapTx": "0xb6ef2aa294c24ecd9524073b02f5bc956535dc39a6573a3a5d9c2cce42b2550c",
+    "setRateTx": "0xafafce58d8841c4ecc3e56c9ce3b755bccd42931dc9ee49737221b76d107e591"
+  },
+  {
+    "index": 49,
+    "timestamp": 1790426700,
+    "priceE18": 2002142955084005769216,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x1390f7dfeb949b24355b582a15979c9d3fb714639f39a3631113ca1978861ef0",
+    "swapTx": "0x976a5eac87a7325f5a63a28aea28adeb6e2791f9b567e2d2a23387d8f14e1105",
+    "setRateTx": "0xf3d5e79166cdd0b204242d5b8882b4c0e7873d29db6e424d6e4027963ef393f8"
+  },
+  {
+    "index": 50,
+    "timestamp": 1790427600,
+    "priceE18": 2001227523503547744256,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x9c3bab9e943382e741b8508904319f47f7e784f2e60c409da79315c4332a58d1",
+    "swapTx": "0xeb4237e0de6af272dd4968c01eef8596dac28c90979a4d1bfc81e8546dc62e5e",
+    "setRateTx": "0xa0c319527c8946f6eceeb9a21cfe891919a034cc356597270e8d7480ee729062"
+  },
+  {
+    "index": 51,
+    "timestamp": 1790428500,
+    "priceE18": 1998737582668137103360,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xa5f9d16333d5e150ed7523a72234158b3e4ede1849326a089d92cdc43961e13f",
+    "swapTx": "0x28e1c4f3d9d4ef25fc2fddd1eb2809291725c24d5487afd30690e3fb2b4d09c1",
+    "setRateTx": "0xd3c86b8648ca41f40581db61632d8c8cbaa13485491180cdde82e45fcbd0cc06"
+  },
+  {
+    "index": 52,
+    "timestamp": 1790429400,
+    "priceE18": 1998734291377723015168,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x04d3ce8288eebf687b3055034c349db29f47474387ce254f18a8dab0b233d1cb",
+    "swapTx": "0x4392a3df95b01f70e9b6302325baf94f4d1e4d9b2509848d41515b2e99f2c94a",
+    "setRateTx": "0xbc7acae514038023153bc4df0e3b998a5e215bd128660e528a8a4443e1de3fd3"
+  },
+  {
+    "index": 53,
+    "timestamp": 1790430300,
+    "priceE18": 2000726897629244686336,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x60360978fa4c6c57c1c60e2785a8bf9ffb82a457cecd39c69906dd5019d7a97d",
+    "swapTx": "0xd3ac5da1a68028721a36ef4978a72daff8c953283592034cf54cbca6430cc4a4",
+    "setRateTx": "0x1f724a52755c338b51a56a8fda317e7e0cec19b7c3bcaae7b12947b411c609ad"
+  },
+  {
+    "index": 54,
+    "timestamp": 1790431200,
+    "priceE18": 2001024839183105785856,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xa46a37842382290fdf7fde2a58e8f4b9a2bec1dc7c1645f95446905a38502bdc",
+    "swapTx": "0x876c90557bbe719d1750d6bd8521f2fcea0885950152c1ea4a077bb8e7e9a20c",
+    "setRateTx": "0x313e7a5fff64da07a580f3881f004e32595a7e3291b14a70742ce18aae20e486"
+  },
+  {
+    "index": 55,
+    "timestamp": 1790432100,
+    "priceE18": 2002053267407417901056,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x807e421867a6331194a392539e17aef9f1dbdc9acab535e841cf69b61aef5769",
+    "swapTx": "0xd5bf7acc4ddabef48aa4bfaaf227fb9bf30337df41adb0899c7af5231b48e15a",
+    "setRateTx": "0x9300a7400daa4f54360adea7919f75c895d9b17581e6b6d63146496f12d7c843"
+  },
+  {
+    "index": 56,
+    "timestamp": 1790433000,
+    "priceE18": 2001621059844202299392,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xde83fb72126497edad41eab82714a1f5bce096ede20adde4fc8255534eb33599",
+    "swapTx": "0x5f4a477f46e384704dbb69a3124602da5a1295bb1512cda0c1f1fd82c1922149",
+    "setRateTx": "0xa31cd6d6b4acc4e7b52ab3c131044f579c04b5b89ab259363815709048ede4ac"
+  },
+  {
+    "index": 57,
+    "timestamp": 1790433900,
+    "priceE18": 2002207708555911364608,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x994c7c4a959c28dd9face439b64bb1e43bb841ed8b49fd3cbb76541e45945738",
+    "swapTx": "0x267007572580df0d757a55182237745bdcc5e610316e7d030b539ba319444463",
+    "setRateTx": "0x1e8f41ac8c9cf3ab7d02c19d6586bf17591cc0e4e51a68d397a250137599c368"
+  },
+  {
+    "index": 58,
+    "timestamp": 1790434800,
+    "priceE18": 2002141447583088246784,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x4829e17e2d1c464d888022625294531253aa9a07580784a089afc5af6813f2c2",
+    "swapTx": "0xb3f4b0099d54e8d3ddc4bdcdeee92a89a283a8e83fd5f411750f126bce0bbb66",
+    "setRateTx": "0x84d7bb97c9fd51611aa6a1e01be63caa5cbe3701f07834970e1c136bf529ea4e"
+  },
+  {
+    "index": 59,
+    "timestamp": 1790435700,
+    "priceE18": 2003487182273447198720,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x525ce5173c67a7bddd3838e8c40172c956659b2522064c510c727183918efb38",
+    "swapTx": "0x4f7d3110cac2d30d0a24d1c2637feab575ea8977d731635041d91d438e39f98f",
+    "setRateTx": "0x7a75a91d313d3e898e0ed40d92237f26140b9d5e29a8464b128cf3b96d343ebc"
+  },
+  {
+    "index": 60,
+    "timestamp": 1790436600,
+    "priceE18": 2004948858764511412224,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x4839ab29a49913ad37f2adaaf1bb58980ca8b21b8be28ef893c79358be7940de",
+    "swapTx": "0xf6ce9e7d199b2b7d87516bbb3e22043e832a82acf2b3957281acc00b3aebec01",
+    "setRateTx": "0x308c46ef68f76caeb2fa4990624aad2cb200a405a1fac39dcfc758500a7e6305"
+  },
+  {
+    "index": 61,
+    "timestamp": 1790437500,
+    "priceE18": 2004931814706629574656,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xd9b6cfaa5f5d26f40556f2ef274cfc3b12bee4a5a83dbf4a4f447a13b668a8d2",
+    "swapTx": "0x1eebc12e378f988e22033bb9bd65e61f4a8529535d50476750f5c1397f0f133f",
+    "setRateTx": "0x2258a8359081a712557752c4d061de15cededa5c4ac69d2a8c3358a75e201584"
+  },
+  {
+    "index": 62,
+    "timestamp": 1790438400,
+    "priceE18": 2004606025611075911680,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xa644bc51827a6e91ae726e007bb324b29b09b46cbacb9da53c79752cfff27d08",
+    "swapTx": "0x0c01ee491f10f233435ee1fbc69f626ef79b21e0105f1b360497b40ab035e1e8",
+    "setRateTx": "0x390f598017fa535eaa86e011c37bbfa10f71cad37c91d36a53fae5f4eced68da"
+  },
+  {
+    "index": 63,
+    "timestamp": 1790439300,
+    "priceE18": 2003363564052614742016,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x1588db993a97c54928e1b13bee7149c9b4137d0667c1da94dedf9aa931182a5a",
+    "swapTx": "0x47721923803fb8d987b043ee1e1f166c18bdd3196032e1ae459c3f9e34d8c4ee",
+    "setRateTx": "0x9d1cf5438a2d6027f6808c2ad23803b5482138c63f15fc5b17adf91153f465e3"
+  },
+  {
+    "index": 64,
+    "timestamp": 1790440200,
+    "priceE18": 2005469534689047085056,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x2662d077c1f218acd26d02448669916485b975e160826a72f25ec582b99d229d",
+    "swapTx": "0x42109b8ef0fb8e083e9c9fa55df301264308ecd3558280d518e03991cc84f2df",
+    "setRateTx": "0x5ac43a96e48b34d1571964478a5eba6bf784d768b68806deaa0eaaa405ee6b82"
+  },
+  {
+    "index": 65,
+    "timestamp": 1790441100,
+    "priceE18": 2004413084911615606784,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xc6bb0aea71ea4c493df11a6399689c1d8d03ebee3d12b9c489ccc6e1a05e7ceb",
+    "swapTx": "0x9ed43dbe557bee0d0a8593b565a80e0b9bc4a2ba09898ea5a5b5c57694558a44",
+    "setRateTx": "0x72608a78224b685c0aa3d58ef4de29474a5630eaa367eb71f2fc83169b5c6418"
+  },
+  {
+    "index": 66,
+    "timestamp": 1790442000,
+    "priceE18": 2002313144036436475904,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xb021039eb1707f121f5426133c07261b19f197bb59bdb1c953ed979d49effb96",
+    "swapTx": "0x01860fb87c2cf3de4dd2096a0496f3025ef051c007adc50de42289d6720c6db4",
+    "setRateTx": "0x92575c8b74f8292d7026bbb221cdfba6e0e247b28d90939633a709066ab3596e"
+  },
+  {
+    "index": 67,
+    "timestamp": 1790442900,
+    "priceE18": 2001819209180628385792,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x6705f6ed42f6351b9318d32567547ef9ee2407bc1ba7c66b9d6b03732fefcf22",
+    "swapTx": "0xe3c8ae9b39ffb457cecdd52f00577b4333a6250762c4e14f62a71265bdc57d6b",
+    "setRateTx": "0xdb6527eb603660f54607ab8afbe99989161316d6b4c896d7a67a2cdfe2eb4b82"
+  },
+  {
+    "index": 68,
+    "timestamp": 1790443800,
+    "priceE18": 2002514171737594658816,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xaf231f9f97c1c283b0c4d52d67e588bb5ecbd00b1c7a542e971c4e2b4d8d6c1f",
+    "swapTx": "0xd931cf0a0f0af3f60ad8a719eac02db2421fb961df94607beaba68b082628ec0",
+    "setRateTx": "0xaca58b9b494915b609130206fadde174eee1dc9a02354e95af9d710f006b5b81"
+  },
+  {
+    "index": 69,
+    "timestamp": 1790444700,
+    "priceE18": 2003290447443640188928,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x8caba59834b049419e56c44a5c7a352f4a04fd454b02cf8c3a23177aeb54042f",
+    "swapTx": "0x39c08a818d4fc048d78dd020b25e6ca695389767aa3adbfbec388aca8145c7ae",
+    "setRateTx": "0x443cb26dee1140b07b13605e66a465adc7be0e74f025a7748f4966424f22c66b"
+  },
+  {
+    "index": 70,
+    "timestamp": 1790445600,
+    "priceE18": 2002934304041864265728,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x79a7df6bf406bfa1ae3edcb3b364b5a56a975f0c58a4f638d49d2fa26235e897",
+    "swapTx": "0x0c8e1a74a3af431477e1898c559597b6e55617b64d5af93c211f41f9e16393d9",
+    "setRateTx": "0x8f5dac02cc358907d3a63d47c50d65a66e753a1e783fc81612c05e9bf0fcb3d5"
+  },
+  {
+    "index": 71,
+    "timestamp": 1790446500,
+    "priceE18": 2001526087431051804672,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x5fafe0e2c81a4210db563a7719c3082b92587a63f928b4c1e1f6fcbd3b63f529",
+    "swapTx": "0xce9f4cf22be71d20fa53ddff9e6baeac63e2e4c9d58740cacb0e9e32b7c5e881",
+    "setRateTx": "0xe5517a3d0a4e095646eb283aadc518e35250fee8df53b1511b444c231fb52337"
+  },
+  {
+    "index": 72,
+    "timestamp": 1790447400,
+    "priceE18": 2000160880832403210240,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x2a6bbf4fafb5a7b2910ba631208e6896742f4f54d68a5142076c1c1e64fc9362",
+    "swapTx": "0x4b223665a1f07e4a95e070aa20cb5bb1adfbd103a23b40233c8046a8b49c6c12",
+    "setRateTx": "0xba9f2442d5ec1d3116ef91eb9b5c2580c898ec6ae5c584c4be64ba5f6c6e31ac"
+  },
+  {
+    "index": 73,
+    "timestamp": 1790448300,
+    "priceE18": 1998876508122158727168,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x2158ae703d5bcaadfc82ba133e601d84cabc1a158a4ad5bd1de48d1c4f372361",
+    "swapTx": "0xbdb1249966be19b58619ee69b6ca27d59f7d969ed1e65573fdd927cf7101c0a5",
+    "setRateTx": "0x6323e1849397183a6a33690c6b23f061431e3ef9027469246cbeda06079a9d84"
+  },
+  {
+    "index": 74,
+    "timestamp": 1790449200,
+    "priceE18": 2000107523608900009984,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xa325af41d4c5d7d75797cdcb002767ff18f2c178a2bfdcb4fb3f19d495faab02",
+    "swapTx": "0xf023ecbd962d41ab7f056be91092344a1bc16d22920e19a7c8e16055b0736ca4",
+    "setRateTx": "0xb72a75a7203a791451e40967fe90b839e49d4b17cbf3ed70f6278b2b0f45fe28"
+  },
+  {
+    "index": 75,
+    "timestamp": 1790450100,
+    "priceE18": 1999317648658536857600,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x40dd3e67509453fe6bd9e4e2ec22647bd2d4d7fce568b6d88187308575caf902",
+    "swapTx": "0xf024c0d4006de94ade8a555a704c5a940aee8b8ed92fdeef2d6eb1e93db29901",
+    "setRateTx": "0x2df1d034f2148facbab60f6aeb98131dbc046e1b27f262bfed96f9fbc216a413"
+  },
+  {
+    "index": 76,
+    "timestamp": 1790451000,
+    "priceE18": 1998430047361803747328,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xc7de4a4d4c151ddaece3d9823d2b2882bfc7bbee82d7c16a813613b98b750770",
+    "swapTx": "0xd9ba2e1843a39304993d95dbdd6c7347d921956936da1b966ec8d1d603e20feb",
+    "setRateTx": "0xfc2c94c41d9b116074bb5c1fbb680c4cff2378c497ced3299037c56ac2a3c7eb"
+  },
+  {
+    "index": 77,
+    "timestamp": 1790451900,
+    "priceE18": 1998567515540234436608,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x86a3e4e634ed349c06b2ee818ed0fb50a0deab7e9d6ae7b7e1800150eaef4446",
+    "swapTx": "0xe8b672176ea243bf569d4ae8c3e854c00069573e12ece7f855924bdc45b5c7e0",
+    "setRateTx": "0xb4a3d033e80fbde5338572f0537c37ac3050a41fd35dd452ae2c9f1d1d0252d7"
+  },
+  {
+    "index": 78,
+    "timestamp": 1790452800,
+    "priceE18": 1997834179874260254720,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0xc7833f6c3a4b145880872f08f0853dfc08ecef3e5805d6ea1f36ff6465cc5d76",
+    "swapTx": "0x636b0f39fcd7681ed29205574e0a5b2fd4f6c4bd234556cf134d33bfee7d8185",
+    "setRateTx": "0xbeb49273df63fa026f78dbc394baa3d5e91f069f307d2a90491ec45b3dbecba3"
+  },
+  {
+    "index": 79,
+    "timestamp": 1790453700,
+    "priceE18": 1998699910624496320512,
+    "swapUsdc": 190258751902587518976,
+    "rateBps": 300,
+    "setPriceTx": "0x5170ea260e609c25d4b11244f813d3fa6db0f3adbee2007f0390c47553f6f019",
+    "swapTx": "0x75604e22d2f44e255d8157c56ac92614574d9b5fc912e8eb29b2ec0d376507e2",
+    "setRateTx": "0xc3d9da84fc6658ae7172278a337c775a18236dc8a3d0a10a4e868e4c31bfb348"
+  }
+]
