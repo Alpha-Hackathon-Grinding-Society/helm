@@ -6,6 +6,7 @@
  * of the addresses, so there is exactly one place where a deployed address is written
  * down and a judge can check the dashboard against the deployment record.
  */
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -42,12 +43,50 @@ export type Limits = {
   freshnessSec: number;
 };
 
-export const REPO_ROOT = path.resolve(process.cwd(), "..");
-export const DEPLOYMENT_PATH = path.join(REPO_ROOT, "deployments", "base-sepolia.json");
-export const LEDGER_PATH = path.join(REPO_ROOT, "agent", "ledger", "cycles.jsonl");
-export const CHAIN_EVENTS_PATH = path.join(REPO_ROOT, "agent", "ledger", "chain-events.jsonl");
-export const METRICS_PATH = path.join(REPO_ROOT, "agent", "models", "metrics.json");
-export const BENCHMARK_PATH = path.join(REPO_ROOT, "docs", "BENCHMARK.md");
+/**
+ * Where the committed artefacts live.
+ *
+ * In a local checkout the dashboard sits inside the repository, so the files are one
+ * directory up. On a hosted deployment the repository is not there, so the build copies
+ * the same files into `dashboard/data/` first and the loader looks there. Both paths read
+ * the same bytes from the same commit, so the hosted dashboard and a local checkout show
+ * the same evidence.
+ */
+function firstExisting(candidates: string[]): string {
+  for (const candidate of candidates) {
+    try {
+      if (existsSync(candidate)) return candidate;
+    } catch {
+      // a candidate that cannot be checked is simply not the one
+    }
+  }
+  return candidates[0];
+}
+
+const APP_ROOT = process.cwd();
+const REPO_ROOT = path.resolve(APP_ROOT, "..");
+
+export const DEPLOYMENT_PATH = firstExisting([
+  path.join(APP_ROOT, "data", "base-sepolia.json"),
+  path.join(REPO_ROOT, "deployments", "base-sepolia.json"),
+  path.join(REPO_ROOT, "data", "base-sepolia.json"),
+]);
+export const LEDGER_PATH = firstExisting([
+  path.join(APP_ROOT, "data", "cycles.jsonl"),
+  path.join(REPO_ROOT, "agent", "ledger", "cycles.jsonl"),
+]);
+export const CHAIN_EVENTS_PATH = firstExisting([
+  path.join(APP_ROOT, "data", "chain-events.jsonl"),
+  path.join(REPO_ROOT, "agent", "ledger", "chain-events.jsonl"),
+]);
+export const METRICS_PATH = firstExisting([
+  path.join(APP_ROOT, "data", "metrics.json"),
+  path.join(REPO_ROOT, "agent", "models", "metrics.json"),
+]);
+export const BENCHMARK_PATH = firstExisting([
+  path.join(APP_ROOT, "data", "BENCHMARK.md"),
+  path.join(REPO_ROOT, "docs", "BENCHMARK.md"),
+]);
 
 export async function loadDeployment(): Promise<Deployment> {
   const raw = await readFile(DEPLOYMENT_PATH, "utf8");

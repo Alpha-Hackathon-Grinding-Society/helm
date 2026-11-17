@@ -38,3 +38,6 @@ notes/
 
 # windows metadata that came with the PRD
 *:Zone.Identifier
+
+# build output: the dashboard copies the committed artefacts here before the build
+dashboard/data/
