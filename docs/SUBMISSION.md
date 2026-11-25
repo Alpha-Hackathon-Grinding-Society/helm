@@ -23,7 +23,7 @@ Helm keeps your stablecoins earning under limits you set once: a neural network 
 Stablecoin funds have to be split between lending and liquidity provision, and today's best rate can be wrong by the next hour.
 Helm uses an off-chain neural network to propose the split, then puts the proposal through a reactive contract that applies the user's limits before any funds move.
 The enforcer runs on Reactive Lasna and reaches a vault on Base Sepolia through Reactive callbacks.
-The evidence is live: the generated chain record contains 798 cycles opened on chain, 168 of them full cycles, 167 proposals clamped by the contract, 4 rebalances that moved test funds and 1 autonomous exit with no model proposal.
+The evidence is live: the generated chain record contains 807 cycles opened on chain, 171 of them full cycles, 170 proposals clamped by the contract, 4 rebalances that moved test funds and 1 autonomous exit with no model proposal.
 The backtest is also reported against simple alternatives, including the cases where Helm loses.
 
 ### Long description
@@ -78,11 +78,11 @@ It can also act without the model: if observed volatility breaches the approved 
 #### The on-chain proof
 
 `scripts/collect-evidence.py` reads the two chains and writes `docs/EVIDENCE.md` and `agent/ledger/chain-events.jsonl` from the same pass.
-The generated record contains 798 cycles opened on Reactive Lasna, of which 168 are full cycles.
-It contains 167 proposals clamped by the contract, 137 proposals stopped by the economic veto and 1 proposal refused before execution.
+The generated record contains 807 cycles opened on Reactive Lasna, of which 171 are full cycles.
+It contains 170 proposals clamped by the contract, 140 proposals stopped by the economic veto and 1 proposal refused before execution.
 There are 4 rebalances that moved test funds, of which 2 opened a liquidity position, and 1 autonomous exit with no model proposal.
-629 cycles were written off unanswered; the longest run is 586 consecutive cycles (182–767, 2026-11-17 15:18 UTC → 2026-11-24 20:47 UTC), the week the agent process was down. During that week the enforcer kept opening cycles and closed each one with no proposal and no funds moved — the contract stayed safe without the AI, which is the point of the design.
-The median open-to-proposal latency is 36 s and the median open-to-enforced latency is 35 s; the worst observed times are 582 s and 582 s respectively.
+634 cycles were written off unanswered; the longest run is 586 consecutive cycles (182–767, 2026-11-17 15:18 UTC → 2026-11-24 20:47 UTC), the week the agent process was down. During that week the enforcer kept opening cycles and closed each one with no proposal and no funds moved — the contract stayed safe without the AI, which is the point of the design.
+The median open-to-proposal latency is 36 s and the median open-to-enforced latency is 36 s; the worst observed times are 582 s and 582 s respectively.
 
 The generated claims registry records 37 passing Foundry tests and 46 passing Python tests.
 The live deployment verifier is `bash scripts/verify-deployment.sh`; it checks the addresses, wiring, envelope, deployed bytecode, callback funding, Reactive reserve and evidence record, and exits non-zero on any mismatch.

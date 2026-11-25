@@ -4,14 +4,14 @@ Every row below was read off the two chains by `scripts/collect-evidence.py`, wh
 
 * **Enforcer (Reactive Lasna, 5318007)** — `0xf24f1d13F995a2368015868048F791426AfeD39C`
 * **Vault (Base Sepolia, 84532)** — `0x9ED8FAD6627B89104b5a5C2C31334168Ce73EB77`
-* **Cycles seen:** 798 · **full cycles:** 168
-* **Proposals clamped by the contract:** 167
-* **Proposals stopped by the economic veto:** 137
+* **Cycles seen:** 807 · **full cycles:** 171
+* **Proposals clamped by the contract:** 170
+* **Proposals stopped by the economic veto:** 140
 * **Proposals rejected before execution:** 1
 * **Rebalances that moved funds:** 4 (of which 2 opened a liquidity position)
 * **Autonomous exits (contract acted without the model):** 1
-* **No-trades (move below the minimum trade):** 164
-* **Cycles written off unanswered:** 629
+* **No-trades (move below the minimum trade):** 167
+* **Cycles written off unanswered:** 634
 * **The longest unanswered run:** 586 cycles, 182–767, from 2026-11-17 15:18 UTC to 2026-11-24 20:47 UTC
 
 The 586 cycles from 2026-11-17 15:18 UTC to 2026-11-24 20:47 UTC were opened while the agent was offline. The enforcer kept opening cycles on its cron subscription and wrote each one off when the freshness window closed: no proposal, no callback that moved funds, no manual intervention. That is the designed failure mode — the model is an input, not a dependency. The run is left in the record rather than trimmed, because it is the clearest evidence that the contract stays safe when the AI is not there.
@@ -190,6 +190,9 @@ A full cycle has six legs. The first three are the Reactive part: the contract o
 | 796 | [`0xb6adff…`](https://lasna.reactscan.net/tx/0xb6adff89ea43c752a818c87a00bf2bbbcc18689cb6aaf560130beee20e06d106) | [`0x256e62…`](https://sepolia.basescan.org/tx/0x256e62394842b35f98025d8e426f853568d4449ac46da3f69fb7ffd866fdff14) | [`0x13d88d…`](https://sepolia.basescan.org/tx/0x13d88dc5f71ce306fb99a278b83a32178ed1127b99ec7c535922b6c4c5a75ec8) | [`0xd18dba…`](https://lasna.reactscan.net/tx/0xd18dba830ae7119e038404e841d148f2d2c0d8b0f6c4ad01794b0dd8f6ebb5da) | no_trade | 7102 → 0 bps | LP_ABOVE_MAX, ECONOMIC_VETO |
 | 797 | [`0xfaf204…`](https://lasna.reactscan.net/tx/0xfaf2040c9cf3c3823b6848cea30f3d2afba77dcd82cf0a426021e43bd7412553) | [`0x630c65…`](https://sepolia.basescan.org/tx/0x630c6514aaec5f7e728413db47515e60ed3d1e43cb2b4984e2aa064145b3379f) | [`0x3e0d4f…`](https://sepolia.basescan.org/tx/0x3e0d4fa5f828fac157d15769e8e1d26e7a8137dd56a3cc80c94c3dfb5d523b70) | [`0x9054bc…`](https://lasna.reactscan.net/tx/0x9054bcad9cd2a650cb1493f2dce4cd3d25bd9c7f620078b4f0efdbaefe4205fa) | no_trade | 7102 → 0 bps | LP_ABOVE_MAX, ECONOMIC_VETO |
 | 798 | [`0xe8c587…`](https://lasna.reactscan.net/tx/0xe8c5875b0d2708f715eaed380df9469462dbef2ff2f4d3f3efd6372b587b2534) | [`0xb06a38…`](https://sepolia.basescan.org/tx/0xb06a386565c50a11e05e4399d37ee1aea2842f14d22d4a292c42a092e2fe14a7) | [`0xb05a9b…`](https://sepolia.basescan.org/tx/0xb05a9be23b6473b21bf1c766301979d489d7e4a5fb05cf1ea08d003805ed015b) | [`0xfa4118…`](https://lasna.reactscan.net/tx/0xfa411892b381ac3a052423e0163971a70eaa89f518ab67e3ac89d338579d7e93) | no_trade | 7102 → 0 bps | LP_ABOVE_MAX, ECONOMIC_VETO |
+| 799 | [`0x2f8944…`](https://lasna.reactscan.net/tx/0x2f8944ebb341e0412c3887482668874b18bef7fde1b4b7a2f01393b74d941c01) | [`0xc8fefa…`](https://sepolia.basescan.org/tx/0xc8fefa13fd2a0388379d8c572ec36090363de07dc7815489b51d828b27fa4717) | [`0x76e89a…`](https://sepolia.basescan.org/tx/0x76e89a076f42da4a85d64366794105cc179440631d16c8cd4f56f6f0c6930f9b) | [`0x431937…`](https://lasna.reactscan.net/tx/0x43193761297f4a53ab5b43d4d91d1896e67ec5500a88bc1c6932bb1db3df1afb) | no_trade | 7102 → 0 bps | LP_ABOVE_MAX, ECONOMIC_VETO |
+| 800 | [`0xa5ef15…`](https://lasna.reactscan.net/tx/0xa5ef155f2ad906d40d35535f3c6f2cc4cc4c147100cdeedbeee3064adb1fb542) | [`0x6c61af…`](https://sepolia.basescan.org/tx/0x6c61af83b36c18eac1b7fc81edc06618cdb2bf0ee4e7db6b2a3a73da5432b7ed) | [`0xe2a7f2…`](https://sepolia.basescan.org/tx/0xe2a7f2d2a2eb948dba8bc69e032ce450416df8f496d87cbfc4dbce24a63ae8f1) | [`0x0372c1…`](https://lasna.reactscan.net/tx/0x0372c1100be7437e5aeed3e8e278abaeed6e7d63bed36e766dd428241660c2a9) | no_trade | 7102 → 0 bps | LP_ABOVE_MAX, ECONOMIC_VETO |
+| 801 | [`0xbcffc3…`](https://lasna.reactscan.net/tx/0xbcffc37a684e6d68cbcfde1c21dbb8d16ac3b22f9bd0ca2b404c12b905344b8a) | [`0x9d7d82…`](https://sepolia.basescan.org/tx/0x9d7d827881e5e1d0c837ccec523f65c56e40833e7432996e4575cc5c123149b5) | [`0x108c07…`](https://sepolia.basescan.org/tx/0x108c07db7e97276b8871fe06cfe1cb0da3790ef4c14def734e963dfa286137cc) | [`0xfdeda3…`](https://lasna.reactscan.net/tx/0xfdeda32a620ffa85f74f6eefcb80b84a5db6921d19c617342c16586cfb8f66d8) | no_trade | 7102 → 0 bps | LP_ABOVE_MAX, ECONOMIC_VETO |
 
 ## Every cycle, including the ones that did not complete
 
@@ -993,6 +996,15 @@ A full cycle has six legs. The first three are the Reactive part: the contract o
 | 796 | no_trade | [`0xb6adff…`](https://lasna.reactscan.net/tx/0xb6adff89ea43c752a818c87a00bf2bbbcc18689cb6aaf560130beee20e06d106) | [`0x256e62…`](https://sepolia.basescan.org/tx/0x256e62394842b35f98025d8e426f853568d4449ac46da3f69fb7ffd866fdff14) | [`0x13d88d…`](https://sepolia.basescan.org/tx/0x13d88dc5f71ce306fb99a278b83a32178ed1127b99ec7c535922b6c4c5a75ec8) | [`0xd18dba…`](https://lasna.reactscan.net/tx/0xd18dba830ae7119e038404e841d148f2d2c0d8b0f6c4ad01794b0dd8f6ebb5da) | [`0xd18dba…`](https://lasna.reactscan.net/tx/0xd18dba830ae7119e038404e841d148f2d2c0d8b0f6c4ad01794b0dd8f6ebb5da) |
 | 797 | no_trade | [`0xfaf204…`](https://lasna.reactscan.net/tx/0xfaf2040c9cf3c3823b6848cea30f3d2afba77dcd82cf0a426021e43bd7412553) | [`0x630c65…`](https://sepolia.basescan.org/tx/0x630c6514aaec5f7e728413db47515e60ed3d1e43cb2b4984e2aa064145b3379f) | [`0x3e0d4f…`](https://sepolia.basescan.org/tx/0x3e0d4fa5f828fac157d15769e8e1d26e7a8137dd56a3cc80c94c3dfb5d523b70) | [`0x9054bc…`](https://lasna.reactscan.net/tx/0x9054bcad9cd2a650cb1493f2dce4cd3d25bd9c7f620078b4f0efdbaefe4205fa) | [`0x9054bc…`](https://lasna.reactscan.net/tx/0x9054bcad9cd2a650cb1493f2dce4cd3d25bd9c7f620078b4f0efdbaefe4205fa) |
 | 798 | no_trade | [`0xe8c587…`](https://lasna.reactscan.net/tx/0xe8c5875b0d2708f715eaed380df9469462dbef2ff2f4d3f3efd6372b587b2534) | [`0xb06a38…`](https://sepolia.basescan.org/tx/0xb06a386565c50a11e05e4399d37ee1aea2842f14d22d4a292c42a092e2fe14a7) | [`0xb05a9b…`](https://sepolia.basescan.org/tx/0xb05a9be23b6473b21bf1c766301979d489d7e4a5fb05cf1ea08d003805ed015b) | [`0xfa4118…`](https://lasna.reactscan.net/tx/0xfa411892b381ac3a052423e0163971a70eaa89f518ab67e3ac89d338579d7e93) | [`0xfa4118…`](https://lasna.reactscan.net/tx/0xfa411892b381ac3a052423e0163971a70eaa89f518ab67e3ac89d338579d7e93) |
+| 799 | no_trade | [`0x2f8944…`](https://lasna.reactscan.net/tx/0x2f8944ebb341e0412c3887482668874b18bef7fde1b4b7a2f01393b74d941c01) | [`0xc8fefa…`](https://sepolia.basescan.org/tx/0xc8fefa13fd2a0388379d8c572ec36090363de07dc7815489b51d828b27fa4717) | [`0x76e89a…`](https://sepolia.basescan.org/tx/0x76e89a076f42da4a85d64366794105cc179440631d16c8cd4f56f6f0c6930f9b) | [`0x431937…`](https://lasna.reactscan.net/tx/0x43193761297f4a53ab5b43d4d91d1896e67ec5500a88bc1c6932bb1db3df1afb) | [`0x431937…`](https://lasna.reactscan.net/tx/0x43193761297f4a53ab5b43d4d91d1896e67ec5500a88bc1c6932bb1db3df1afb) |
+| 800 | no_trade | [`0xa5ef15…`](https://lasna.reactscan.net/tx/0xa5ef155f2ad906d40d35535f3c6f2cc4cc4c147100cdeedbeee3064adb1fb542) | [`0x6c61af…`](https://sepolia.basescan.org/tx/0x6c61af83b36c18eac1b7fc81edc06618cdb2bf0ee4e7db6b2a3a73da5432b7ed) | [`0xe2a7f2…`](https://sepolia.basescan.org/tx/0xe2a7f2d2a2eb948dba8bc69e032ce450416df8f496d87cbfc4dbce24a63ae8f1) | [`0x0372c1…`](https://lasna.reactscan.net/tx/0x0372c1100be7437e5aeed3e8e278abaeed6e7d63bed36e766dd428241660c2a9) | [`0x0372c1…`](https://lasna.reactscan.net/tx/0x0372c1100be7437e5aeed3e8e278abaeed6e7d63bed36e766dd428241660c2a9) |
+| 801 | no_trade | [`0xbcffc3…`](https://lasna.reactscan.net/tx/0xbcffc37a684e6d68cbcfde1c21dbb8d16ac3b22f9bd0ca2b404c12b905344b8a) | [`0x9d7d82…`](https://sepolia.basescan.org/tx/0x9d7d827881e5e1d0c837ccec523f65c56e40833e7432996e4575cc5c123149b5) | [`0x108c07…`](https://sepolia.basescan.org/tx/0x108c07db7e97276b8871fe06cfe1cb0da3790ef4c14def734e963dfa286137cc) | [`0xfdeda3…`](https://lasna.reactscan.net/tx/0xfdeda32a620ffa85f74f6eefcb80b84a5db6921d19c617342c16586cfb8f66d8) | [`0xfdeda3…`](https://lasna.reactscan.net/tx/0xfdeda32a620ffa85f74f6eefcb80b84a5db6921d19c617342c16586cfb8f66d8) |
+| 802 | expired | [`0xa39adb…`](https://lasna.reactscan.net/tx/0xa39adb766b1307eff0d7e4344d3b9554c9156169ca1c8ed456f6334de120d979) | [`0x75beb4…`](https://sepolia.basescan.org/tx/0x75beb450dc6191d4bbc4706e4b6bda8800a0ef4834edcc4ce6124eebf243de64) | — | — | [`0x8e0473…`](https://lasna.reactscan.net/tx/0x8e0473d28d1d458e19be716f6aa69d7950e922de5c260a2d9d047e8933a55ad8) |
+| 803 | expired | [`0x8e0473…`](https://lasna.reactscan.net/tx/0x8e0473d28d1d458e19be716f6aa69d7950e922de5c260a2d9d047e8933a55ad8) | [`0x4a31fc…`](https://sepolia.basescan.org/tx/0x4a31fcf12901f063d8c01b469c568d6ec23e34cb44622077dac540d8bf40c8cc) | — | — | [`0x252ae2…`](https://lasna.reactscan.net/tx/0x252ae27be3e1ea902e31598836af76c29ac7b4a727a7524c7675552a5914834f) |
+| 804 | expired | [`0x252ae2…`](https://lasna.reactscan.net/tx/0x252ae27be3e1ea902e31598836af76c29ac7b4a727a7524c7675552a5914834f) | [`0x4d9377…`](https://sepolia.basescan.org/tx/0x4d9377b3d65d6f03e9dcbf8c0527f6b42534e269c2a67e857e474171f613c97f) | — | — | [`0xfea807…`](https://lasna.reactscan.net/tx/0xfea807a049f76d5ef8ea7974aaaea9aa71a6405398903f1b7d780bb60b127342) |
+| 805 | expired | [`0xfea807…`](https://lasna.reactscan.net/tx/0xfea807a049f76d5ef8ea7974aaaea9aa71a6405398903f1b7d780bb60b127342) | [`0x3c2ffa…`](https://sepolia.basescan.org/tx/0x3c2ffa4a6a433ad6bc5cde5224094aa08885bcc4d438d640772b4816469956e4) | — | — | [`0x798794…`](https://lasna.reactscan.net/tx/0x798794bad8c8d2376c0c33979bac899446dc164eaad53497e4b5ae69d73d6aee) |
+| 806 | expired | [`0x798794…`](https://lasna.reactscan.net/tx/0x798794bad8c8d2376c0c33979bac899446dc164eaad53497e4b5ae69d73d6aee) | [`0xa68cc0…`](https://sepolia.basescan.org/tx/0xa68cc0ac7ceb50c9a54f78a6ec53b0f75f6aff3588a31cf5e640ce045cc3373f) | — | — | [`0x40617e…`](https://lasna.reactscan.net/tx/0x40617e950b132958b2b07940821c9c9ba3b8ecf85f8cb9c46eb58746a47705c6) |
+| 807 | open | [`0x40617e…`](https://lasna.reactscan.net/tx/0x40617e950b132958b2b07940821c9c9ba3b8ecf85f8cb9c46eb58746a47705c6) | [`0x4825b4…`](https://sepolia.basescan.org/tx/0x4825b4a3ef9c13b3e5d3b46728b2f80c81e80eebc98bd432ac951a4eb58f0da4) | — | — | — |
 
 ## The five things the judges are asked to look for
 
@@ -1176,9 +1188,12 @@ The event announcement asks for latency measured across the full loop, not one l
 | 796 | 217s | 216s | — |
 | 797 | 27s | 27s | — |
 | 798 | 31s | 31s | — |
+| 799 | 31s | 30s | — |
+| 800 | 171s | 170s | — |
+| 801 | 172s | 171s | — |
 
-* Open → proposal: median **36s**, worst **582s** over 168 cycles.
-* Open → enforced: median **35s**, worst **582s** over 167 cycles.
+* Open → proposal: median **36s**, worst **582s** over 171 cycles.
+* Open → enforced: median **36s**, worst **582s** over 170 cycles.
 
 ## Full transaction hashes
 
@@ -3272,3 +3287,30 @@ The event announcement asks for latency measured across the full loop, not one l
 | 798 | posted | Base Sepolia | `0xb05a9be23b6473b21bf1c766301979d489d7e4a5fb05cf1ea08d003805ed015b` |
 | 798 | evaluated | Lasna | `0xfa411892b381ac3a052423e0163971a70eaa89f518ab67e3ac89d338579d7e93` |
 | 798 | noTrade | Lasna | `0xfa411892b381ac3a052423e0163971a70eaa89f518ab67e3ac89d338579d7e93` |
+| 799 | opened | Lasna | `0x2f8944ebb341e0412c3887482668874b18bef7fde1b4b7a2f01393b74d941c01` |
+| 799 | requested | Base Sepolia | `0xc8fefa13fd2a0388379d8c572ec36090363de07dc7815489b51d828b27fa4717` |
+| 799 | posted | Base Sepolia | `0x76e89a076f42da4a85d64366794105cc179440631d16c8cd4f56f6f0c6930f9b` |
+| 799 | evaluated | Lasna | `0x43193761297f4a53ab5b43d4d91d1896e67ec5500a88bc1c6932bb1db3df1afb` |
+| 799 | noTrade | Lasna | `0x43193761297f4a53ab5b43d4d91d1896e67ec5500a88bc1c6932bb1db3df1afb` |
+| 800 | opened | Lasna | `0xa5ef155f2ad906d40d35535f3c6f2cc4cc4c147100cdeedbeee3064adb1fb542` |
+| 800 | requested | Base Sepolia | `0x6c61af83b36c18eac1b7fc81edc06618cdb2bf0ee4e7db6b2a3a73da5432b7ed` |
+| 800 | posted | Base Sepolia | `0xe2a7f2d2a2eb948dba8bc69e032ce450416df8f496d87cbfc4dbce24a63ae8f1` |
+| 800 | evaluated | Lasna | `0x0372c1100be7437e5aeed3e8e278abaeed6e7d63bed36e766dd428241660c2a9` |
+| 800 | noTrade | Lasna | `0x0372c1100be7437e5aeed3e8e278abaeed6e7d63bed36e766dd428241660c2a9` |
+| 801 | opened | Lasna | `0xbcffc37a684e6d68cbcfde1c21dbb8d16ac3b22f9bd0ca2b404c12b905344b8a` |
+| 801 | requested | Base Sepolia | `0x9d7d827881e5e1d0c837ccec523f65c56e40833e7432996e4575cc5c123149b5` |
+| 801 | posted | Base Sepolia | `0x108c07db7e97276b8871fe06cfe1cb0da3790ef4c14def734e963dfa286137cc` |
+| 801 | evaluated | Lasna | `0xfdeda32a620ffa85f74f6eefcb80b84a5db6921d19c617342c16586cfb8f66d8` |
+| 801 | noTrade | Lasna | `0xfdeda32a620ffa85f74f6eefcb80b84a5db6921d19c617342c16586cfb8f66d8` |
+| 802 | opened | Lasna | `0xa39adb766b1307eff0d7e4344d3b9554c9156169ca1c8ed456f6334de120d979` |
+| 802 | requested | Base Sepolia | `0x75beb450dc6191d4bbc4706e4b6bda8800a0ef4834edcc4ce6124eebf243de64` |
+| 803 | opened | Lasna | `0x8e0473d28d1d458e19be716f6aa69d7950e922de5c260a2d9d047e8933a55ad8` |
+| 803 | requested | Base Sepolia | `0x4a31fcf12901f063d8c01b469c568d6ec23e34cb44622077dac540d8bf40c8cc` |
+| 804 | opened | Lasna | `0x252ae27be3e1ea902e31598836af76c29ac7b4a727a7524c7675552a5914834f` |
+| 804 | requested | Base Sepolia | `0x4d9377b3d65d6f03e9dcbf8c0527f6b42534e269c2a67e857e474171f613c97f` |
+| 805 | opened | Lasna | `0xfea807a049f76d5ef8ea7974aaaea9aa71a6405398903f1b7d780bb60b127342` |
+| 805 | requested | Base Sepolia | `0x3c2ffa4a6a433ad6bc5cde5224094aa08885bcc4d438d640772b4816469956e4` |
+| 806 | opened | Lasna | `0x798794bad8c8d2376c0c33979bac899446dc164eaad53497e4b5ae69d73d6aee` |
+| 806 | requested | Base Sepolia | `0xa68cc0ac7ceb50c9a54f78a6ec53b0f75f6aff3588a31cf5e640ce045cc3373f` |
+| 807 | opened | Lasna | `0x40617e950b132958b2b07940821c9c9ba3b8ecf85f8cb9c46eb58746a47705c6` |
+| 807 | requested | Base Sepolia | `0x4825b4a3ef9c13b3e5d3b46728b2f80c81e80eebc98bd432ac951a4eb58f0da4` |

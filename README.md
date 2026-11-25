@@ -128,18 +128,18 @@ into the liquidity position.
 
 | | |
 | --- | --- |
-| Cycles opened on chain | **798** |
-| Full cycles (opened → asked → proposed → judged → result) | **168** |
-| Proposals clamped by the contract | **167** |
-| Proposals stopped by the economic veto | **137** |
+| Cycles opened on chain | **807** |
+| Full cycles (opened → asked → proposed → judged → result) | **171** |
+| Proposals clamped by the contract | **170** |
+| Proposals stopped by the economic veto | **140** |
 | Proposals refused before execution | **1** |
 | Rebalances that moved funds | **4** (2 of them opened a liquidity position) |
 | Autonomous exits, with no proposal involved | **1** |
-| Cycles written off unanswered | **629** |
+| Cycles written off unanswered | **634** |
 | Longest unanswered run | **586 cycles** (cycle 182–767, 2026-11-17 15:18 UTC → 2026-11-24 20:47 UTC) |
-| Cycles the agent answered and logged | **169** |
+| Cycles the agent answered and logged | **171** |
 | Open → proposal, median / worst | **36 s** / **582 s** |
-| Open → enforced, median / worst | **35 s** / **582 s** |
+| Open → enforced, median / worst | **36 s** / **582 s** |
 
 The complete table, every cycle with every hash, is in
 [`docs/EVIDENCE.md`](docs/EVIDENCE.md), and the machine-readable version of the same data
