@@ -21,8 +21,8 @@ liquidity position, and puts the limit between the model and the money.
 | --- | --- |
 | Reactive enforcer (Lasna testnet, chain 5318007) | [`0xf24f1d13F995a2368015868048F791426AfeD39C`](https://lasna.reactscan.net/address/0xf24f1d13F995a2368015868048F791426AfeD39C) |
 | Vault (Base Sepolia, chain 84532) | [`0x9ED8FAD6627B89104b5a5C2C31334168Ce73EB77`](https://sepolia.basescan.org/address/0x9ED8FAD6627B89104b5a5C2C31334168Ce73EB77) |
-| Live dashboard | `DASHBOARD_URL` |
-| Demo video (2 min 58 s) | `VIDEO_URL` |
+| Live dashboard | <https://helm-dashboard-six.vercel.app> |
+| Demo video (2 min 45 s, 164.92 s) | <https://helm-dashboard-six.vercel.app/helm-demo.mp4> |
 | Repository | <https://github.com/Alpha-Hackathon-Grinding-Society/helm> |
 | Licence | MIT |
 
@@ -36,11 +36,14 @@ by reading both chains. If a number is not in the claims registry, it was not me
 
 ## Video
 
-`VIDEO_URL`
+<https://helm-dashboard-six.vercel.app/helm-demo.mp4>
 
 The video is under three minutes and follows the script in
 [`docs/DEMO-SCRIPT.md`](docs/DEMO-SCRIPT.md): the problem, the risk envelope, the live loop,
-a proposal clamped on-chain, and the backtest against the baselines.
+a proposal clamped on-chain, and the backtest against the baselines. It is silent, with the
+argument carried by title cards and the interface; the committed file is
+[`docs/helm-demo.mp4`](docs/helm-demo.mp4) and the recorder that made it is
+[`scripts/demo-video.mjs`](scripts/demo-video.mjs).
 
 ---
 
@@ -125,19 +128,28 @@ into the liquidity position.
 
 | | |
 | --- | --- |
-| Cycles opened on chain | **158** |
-| Full cycles (opened → asked → proposed → judged → result) | **144** |
-| Proposals clamped by the contract | **143** |
-| Proposals stopped by the economic veto | **113** |
+| Cycles opened on chain | **798** |
+| Full cycles (opened → asked → proposed → judged → result) | **168** |
+| Proposals clamped by the contract | **167** |
+| Proposals stopped by the economic veto | **137** |
 | Proposals refused before execution | **1** |
 | Rebalances that moved funds | **4** (2 of them opened a liquidity position) |
 | Autonomous exits, with no proposal involved | **1** |
-| Open → proposal, median / worst | **33 s** / **514 s** |
-| Open → enforced, median / worst | **33 s** / **513 s** |
+| Cycles written off unanswered | **629** |
+| Longest unanswered run | **586 cycles** (cycle 182–767, 2026-11-17 15:18 UTC → 2026-11-24 20:47 UTC) |
+| Cycles the agent answered and logged | **169** |
+| Open → proposal, median / worst | **36 s** / **582 s** |
+| Open → enforced, median / worst | **35 s** / **582 s** |
 
 The complete table, every cycle with every hash, is in
 [`docs/EVIDENCE.md`](docs/EVIDENCE.md), and the machine-readable version of the same data
 is in [`agent/ledger/chain-events.jsonl`](agent/ledger/chain-events.jsonl).
+
+The 586-cycle run is the week the agent process was down (17–24 Nov). The enforcer kept
+opening cycles on its cron subscription and wrote each one off when the 600 s freshness
+window closed — no proposal, no callback that moved funds, no manual intervention. The run
+is left in the record rather than trimmed, because it is the clearest evidence that the
+contract stays safe when the AI is not there.
 
 Most cycles end in a no-trade, and that is the correct answer: the model asks for 7102 bps
 and the envelope says 4000, and once the vault is already at 4000 there is nothing left to
@@ -155,40 +167,70 @@ which it never saw.
 
 | Strategy | Total return | Max drawdown | Trades | Fees earned | Rebalance cost |
 | --- | --- | --- | --- | --- | --- |
-| **Helm (the model)** | **-7.62%** | -8.71% | 266 | $127.11 | $2,658.44 |
+| **Helm (model + contract rules)** | **-4.26%** | -5.09% | 144 | $69.59 | $2,083.18 |
+| Helm (model alone) | -4.91% | -6.06% | 126 | $91.68 | $1,077.16 |
 | Best rate now | -19.18% | -20.14% | 303 | $182.67 | $13,825.23 |
 | Static 50/50 | -5.68% | -8.06% | 0 | $129.02 | $0.00 |
 | All lending | +0.16% | 0.00% | 0 | $0.00 | $0.00 |
 | All LP | -11.52% | -16.01% | 0 | $258.03 | $0.00 |
 
-**Helm beats "best rate now" by 11.56 points of total return.** That is the baseline the
+**Helm beats "best rate now" by 14.91 points of total return.** That is the baseline the
 brief names, and it is the one Helm is measured against: chasing the highest rate right now
 is the thing people actually do, and it is expensive, because it trades 303 times and pays
 $13,825 of costs to earn $55 more in fees than Helm does.
 
+**Helm (model + contract rules)** is the deployed system: the model's allocation clipped to
+the envelope the user signed, with the contract's own economic veto applied on top. The
+model alone is shown next to it so the effect of that rule is visible rather than claimed —
+on this window the veto is worth 0.64 points, and it was already deployed and already
+firing on chain.
+
+### The same model, window by window
+
+One number for a twenty-day window says how Helm did in one market regime. The evaluation
+region split into four consecutive, disjoint windows, scored with the same fitted model,
+and every one of them out of sample:
+
+| Window | Days | Price move | Helm | Best rate now | Static 50/50 | All lending | All LP |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 5.0 | -1.96% | -0.70% | -5.06% | -0.45% | +0.04% | -0.94% |
+| 2 | 5.0 | -1.16% | -0.67% | -2.61% | -0.25% | +0.04% | -0.53% |
+| 3 | 5.0 | -8.14% | -0.72% | -4.53% | -2.04% | +0.04% | -4.11% |
+| 4 | 5.0 | -12.37% | -2.24% | -8.44% | -3.11% | +0.04% | -6.27% |
+
+Helm beat `best rate now` in **4 of 4** windows, `all LP` in 3 and `static 50/50` in 2. It
+beat `all lending` in **0 of 4**, and every one of these four windows was a falling one.
+
 ### Where Helm loses
 
-**Helm loses to "all lending" by 7.79 points, and to "static 50/50" by 1.95 points.** That
-is in this README, in the dashboard and in the generated report, not in a footnote.
+**Helm loses to "all lending" by 4.43 points.** That is in this README, in the dashboard and
+in the generated report, not in a footnote.
 
 The reason is the window: the price fell 22.41% over the evaluation window, from $2,311.18
 to $1,793.26. A full-range liquidity position is worth `sqrt(P1 / P0)` of what it was worth
 when it was opened, so that move alone is a -11.91% drag on the liquidity leg. Helm earned
-$127 of fees against a $2,658 bill for rebalancing. A strategy that holds no liquidity has
+$69 of fees against a $2,083 bill for rebalancing. A strategy that holds no liquidity has
 no impermanent loss to suffer, and in a market that only goes one way, holding nothing is
 hard to beat.
 
 So Helm does not claim to beat doing nothing. It claims three narrower things, and the
 report is in [`docs/BENCHMARK.md`](docs/BENCHMARK.md):
 
-- It beats the baseline real users actually use, `best rate now`, by 11.56 points.
+- It beats the baseline real users actually use, `best rate now`, by 14.91 points, in 4 of
+  4 windows.
 - It beats holding the liquidity position outright (-11.52%) and a fixed half-and-half
   (-5.68%) on the same window, with the same costs.
-- It does **not** beat staying in lending through a bear market — and the contract is
-  built to notice that and stop, which the model alone did not. The economic veto in cycles
-  above is exactly that mechanism: the contract compares the fee yield it measured itself
-  against the lending rate it measured itself, and sends the allocation to zero when the
-  edge is not there.
+- It does **not** beat staying in lending through a bear market. The contract is built to
+  notice that and stop, and the veto is the mechanism: it compares the fee yield the chain
+  measured itself against the lending rate the chain measured itself, and sends the
+  allocation to zero when the edge is not there. On real market data it would have fired in
+  64% of the window, and it is worth 0.64 points — it helps, and it is not enough.
+
+One more thing the report is explicit about, because it is the kind of thing that is easy to
+leave out: **the backtest does not simulate the volatility exit**, which is driven by
+tick-level price observations that a fifteen-minute bar series does not reproduce, and
+**the chain's fee estimator is measured swap by swap while the backtest measures it bar by
+bar**. Both are named in `docs/BENCHMARK.md`, with what they would change.
 
 Reproduce the whole thing with one command:
 
@@ -333,7 +375,7 @@ evidence this README points at. It exits non-zero if any of that is untrue.
 ### Run the tests
 
 ```bash
-cd contracts && forge test     # 30 tests — every reactive rule
+cd contracts && forge test     # 37 tests — the reactive rules and the vault's money paths
 cd agent && .venv/bin/python -m pytest tests   # 46 tests — the model and the decoding
 ```
 

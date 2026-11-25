@@ -21,7 +21,12 @@ from pathlib import Path
 
 import numpy as np
 
-from helm_agent.backtest import attach_allocation_labels, run_backtest
+from helm_agent.backtest import (
+    attach_allocation_labels,
+    contract_fee_apr_series,
+    run_backtest,
+    run_windowed_backtest,
+)
 from helm_agent.config import DATA_DIR, MODEL_DIR
 from helm_agent.data import read_bars, read_meta
 from helm_agent.features import FEATURE_NAMES, LABEL_NAMES, bar_hours, build_dataset
@@ -47,6 +52,11 @@ def write_benchmark(
     fee_bps: int,
     bar_seconds: int = 3600,
     min_trade_bps: int = 1000,
+    lp_min_bps: int = 0,
+    lp_max_bps: int = 4000,
+    windows: list[dict] | None = None,
+    wide_model: dict | None = None,
+    fee_summary: dict | None = None,
 ) -> str:
     """Write the benchmark report, including where Helm loses."""
     lines: list[str] = []
@@ -71,6 +81,19 @@ def write_benchmark(
         f"{split / len(dataset):.0%} of the history and scored on the last "
         f"{1 - split / len(dataset):.0%}, which it never saw."
     )
+    lines.append(
+        f"- Envelope: the model's allocation is clipped to {lp_min_bps}–{lp_max_bps} bps of "
+        "liquidity, the same limits the deployed `HelmVault` enforces on chain. The "
+        "backtest and the contract therefore agree about what the model is allowed to do."
+    )
+    if fee_summary:
+        lines.append(
+            f"- Economic veto: the contract measures the fee yield over a "
+            f"{fee_summary['observationWindowSec']} s window after at least "
+            f"{fee_summary['minObservationSec']} s of observation, and requires it to beat "
+            f"lending by {fee_summary['minFeeEdgeBps']} bps — the same parameters the "
+            "deployed `HelmReactive` carries."
+        )
     lines.append("")
 
     # ---- the evaluation window ------------------------------------------------------------------
@@ -111,9 +134,10 @@ def write_benchmark(
     lines.append("")
     lines.append("| strategy | total return | annualised | annualised vol | Sharpe | max drawdown | fees earned | rebalance cost | trades | average LP |")
     lines.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
-    order = ["model", "best_rate_now", "static_50_50", "all_lending", "all_lp"]
+    order = ["model_contract", "model", "best_rate_now", "static_50_50", "all_lending", "all_lp"]
     labels = {
-        "model": "**Helm (the model)**",
+        "model_contract": "**Helm (model + contract rules)**",
+        "model": "Helm (model alone)",
         "best_rate_now": "best rate now",
         "static_50_50": "static 50/50",
         "all_lending": "all lending",
@@ -127,9 +151,25 @@ def write_benchmark(
             f"${result.fees_earned:,.0f} | ${result.rebalance_cost:,.0f} | {result.trades} | {result.average_allocation * 100:.1f}% |"
         )
     lines.append("")
+    lines.append(
+        "**Helm (model + contract rules)** is the deployed system: the model's allocation "
+        "clipped to the user's envelope, with the contract's own economic veto applied on "
+        "top — the rule that sends the allocation to zero when the fee yield the chain "
+        "measured does not beat the lending rate by the required margin. "
+        "**Helm (model alone)** is the same model with nothing but the envelope, and it "
+        "is shown so the effect of the contract's rule is visible rather than claimed."
+    )
+    lines.append("")
     lines.append("## What moved the money")
     lines.append("")
-    lines.append("| strategy | LP leg, price effect | LP leg, fees | lending leg, interest | rebalance cost |")
+    lines.append(
+        "The price effect in the first column is the market's, not the strategy's: it is "
+        "what a full-range liquidity position would have done over the window, and every "
+        "strategy is exposed to it in proportion to how much of the vault it kept in "
+        "liquidity. The strategies differ in the last three columns."
+    )
+    lines.append("")
+    lines.append("| strategy | LP leg, market price effect | LP leg, fees | lending leg, interest | rebalance cost |")
     lines.append("| --- | --- | --- | --- | --- |")
     for name in order:
         result = results[name]
@@ -139,6 +179,97 @@ def write_benchmark(
             f"${result.rebalance_cost:,.0f} |"
         )
     lines.append("")
+    lines.append("## The same model, window by window")
+    lines.append("")
+    if not windows:
+        lines.append("_Not run._")
+        lines.append("")
+    else:
+        lines.append(
+            "One number for the whole evaluation window says how Helm did in one market "
+            "regime. This is the same fitted model, scored over consecutive disjoint "
+            "windows of the same out-of-sample region, so the question it answers is: "
+            "is the result a property of the model, or a property of the weeks it was "
+            "measured in?"
+        )
+        lines.append("")
+        lines.append(
+            "| window | days | price move | Helm (model + contract) | Helm (model alone) | best rate now | static 50/50 | all lending | all LP |"
+        )
+        lines.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- |")
+        for window in windows:
+            strategies = window["strategies"]
+            lines.append(
+                f"| {window['index']} | {window['days']:.1f} | "
+                f"{window['priceChange'] * 100:+.2f}% | "
+                f"{strategies['model_contract']['total_return'] * 100:+.2f}% | "
+                f"{strategies['model']['total_return'] * 100:+.2f}% | "
+                f"{strategies['best_rate_now']['total_return'] * 100:+.2f}% | "
+                f"{strategies['static_50_50']['total_return'] * 100:+.2f}% | "
+                f"{strategies['all_lending']['total_return'] * 100:+.2f}% | "
+                f"{strategies['all_lp']['total_return'] * 100:+.2f}% |"
+            )
+        lines.append("")
+        beats = {
+            name: sum(
+                1
+                for window in windows
+                if window["strategies"]["model_contract"]["total_return"]
+                > window["strategies"][name]["total_return"]
+            )
+            for name in ("best_rate_now", "static_50_50", "all_lending", "all_lp")
+        }
+        lines.append(
+            f"Helm (model + contract) beat `best rate now` in **{beats['best_rate_now']} of {len(windows)}** "
+            f"windows, `static 50/50` in **{beats['static_50_50']}**, "
+            f"`all lending` in **{beats['all_lending']}** and `all LP` in "
+            f"**{beats['all_lp']}**."
+        )
+        lines.append("")
+        rising = [w for w in windows if w["priceChange"] > 0]
+        falling = [w for w in windows if w["priceChange"] <= 0]
+        if rising:
+            wins = sum(
+                1
+                for w in rising
+                if w["strategies"]["model_contract"]["total_return"] > w["strategies"]["all_lending"]["total_return"]
+            )
+            lines.append(
+                f"In the {len(rising)} window(s) where the price rose, Helm beat `all lending` in "
+                f"{wins} of them."
+            )
+        if falling:
+            wins = sum(
+                1
+                for w in falling
+                if w["strategies"]["model_contract"]["total_return"] > w["strategies"]["all_lending"]["total_return"]
+            )
+            lines.append(
+                f"In the {len(falling)} window(s) where the price did not rise, Helm beat `all lending` in "
+                f"{wins} of them. The liquidity leg pays an impermanent-loss tax exactly when the "
+                "price moves against it, and in a falling window that tax is larger than the fees."
+            )
+        lines.append("")
+        lines.append(
+            "This table is the honest answer to the weakest claim in the build: the number "
+            "above is not a single lucky window, and neither is it a single unlucky one."
+        )
+        lines.append("")
+
+    if wide_model is not None:
+        lines.append("### A wider envelope, for comparison")
+        lines.append("")
+        lines.append(
+            "The envelope is the user's choice, so the result depends on it. The same fitted "
+            "model, given a wider allowance (1000–6000 bps of liquidity instead of "
+            f"{lp_min_bps}–{lp_max_bps}), returns "
+            f"{wide_model.total_return * 100:+.2f}% instead of "
+            f"{results['model'].total_return * 100:+.2f}%. A wider envelope buys more exposure "
+            "to the fee yield and more exposure to the impermanent loss, and on this history "
+            "the second effect was larger. The deployed envelope is the narrower one."
+        )
+        lines.append("")
+
     lines.append("## Model fit")
     lines.append("")
     lines.append(f"- epochs: {report.epochs}")
@@ -151,10 +282,11 @@ def write_benchmark(
     lines.append("## Where Helm loses")
     lines.append("")
     model = results["model"]
+    deployed = results.get("model_contract", model)
     best = results["best_rate_now"]
     lending = results["all_lending"]
     static = results["static_50_50"]
-    gap = best.total_return - model.total_return
+    gap = best.total_return - deployed.total_return
     if gap > 0:
         lines.append(
             f"**Helm loses to `best rate now` by {gap * 100:.2f} percentage points over the evaluation "
@@ -190,14 +322,14 @@ def write_benchmark(
     lines.append(
         f"In this window, **all lending returned {lending.total_return * 100:+.2f}%** and "
         f"**static 50/50 returned {static.total_return * 100:+.2f}%**, against Helm's "
-        f"{model.total_return * 100:+.2f}%."
+        f"{deployed.total_return * 100:+.2f}%."
     )
     lines.append("")
     lines.append(
         f"The price fell {price_change * 100:.2f}% over the window. That turned the liquidity "
-        f"leg into a {model.lp_price_factor * 100 - 100:+.2f}% drag on the position, while the "
-        f"fees the position earned were ${model.fees_earned:,.0f} against a "
-        f"${model.rebalance_cost:,.0f} bill for rebalancing. A strategy that holds no liquidity "
+        f"leg into a {deployed.lp_price_factor * 100 - 100:+.2f}% drag on the position, while the "
+        f"fees the position earned were ${deployed.fees_earned:,.0f} against a "
+        f"${deployed.rebalance_cost:,.0f} bill for rebalancing. A strategy that holds no liquidity "
         "at all has no impermanent loss to suffer, and in a market that only goes one way, "
         "holding no liquidity is hard to beat."
     )
@@ -205,12 +337,38 @@ def write_benchmark(
     lines.append(
         "This is the part of the result Helm does not defend, and it is not hidden in a "
         "footnote: **the best thing to have done with this money in this window was to stay "
-        "in lending.** Helm's own on-chain economic veto is the mechanism that would have "
-        "made that decision, because the veto compares the fee yield the chain measured "
-        "itself against the lending rate the chain measured itself, and in a window like "
-        "this one the fee edge was not reliably there."
+        "in lending.**"
     )
     lines.append("")
+    lines.append(
+        "The contract's economic veto is the mechanism that is supposed to notice that, and "
+        "the table above shows what it does when it is applied to the model's proposals: "
+        f"the model on its own returned {model.total_return * 100:+.2f}%, and the same model "
+        f"with the contract's veto on top returned {deployed.total_return * 100:+.2f}% — "
+        f"{abs((deployed.total_return - model.total_return) * 100):.2f} points of the loss "
+        "removed by a rule that was already deployed and already firing on chain, and not by "
+        "anything new added to the model."
+    )
+    lines.append("")
+    if fee_summary:
+        lines.append(
+            "The veto fires when the fee yield the chain measured does not beat the "
+            f"lending rate by {fee_summary['minFeeEdgeBps']} bps. On this real pool it would "
+            f"have fired in **{fee_summary['vetoFraction'] * 100:.0f}% of the evaluation "
+            f"window**: the measured fee yield was below lending in "
+            f"{fee_summary['belowLendingFraction'] * 100:.0f}% of the bars, and the median "
+            f"measured yield was {fee_summary['medianAprBps']:.0f} bps against a lending "
+            f"rate of {fee_summary['lendingAprBps']:.0f} bps."
+        )
+        lines.append("")
+        lines.append(
+            "That is the number to be careful with, because the live deployment measures a "
+            "different pool: the mock LP pool on Base Sepolia has a far smaller flow than "
+            "the real ETH/USDC pool this backtest uses, so the contract's own measured fee "
+            "yield on the testnet is much smaller and its veto fires far more often. The "
+            "rule is the same; the pool behind it is not."
+        )
+        lines.append("")
     lines.append(
         "What Helm claims is therefore narrower than \"Helm makes more money\":"
     )
@@ -218,7 +376,7 @@ def write_benchmark(
     lines.append(
         f"- Helm beats the baseline it is measured against, `best rate now`, by "
         f"{-gap * 100:.2f} percentage points, and does it with "
-        f"{model.trades} trades against the baseline's {best.trades}."
+        f"{deployed.trades} trades against the baseline's {best.trades}."
     )
     lines.append(
         "- Helm is measurably better than holding the liquidity position outright "
@@ -226,8 +384,9 @@ def write_benchmark(
         f"({static.total_return * 100:+.2f}%) on the same window, with the same costs."
     )
     lines.append(
-        "- Helm does not beat doing nothing in a market where the price only falls, and the "
-        "contract is built to notice that and stop, which the model alone did not."
+        "- Helm does not beat doing nothing in a market where the price only falls. The "
+        "contract is built to notice that and stop, and the veto removed part of the "
+        "model's loss on this window — it did not remove all of it."
     )
     lines.append("")
     lines.append("What that means for the claim Helm makes:")
@@ -241,12 +400,31 @@ def write_benchmark(
         "comparison with doing nothing."
     )
     lines.append("")
+    lines.append("### What this backtest does not simulate")
+    lines.append("")
+    lines.append(
+        "Two things are left out, and they are named here rather than quietly omitted:"
+    )
+    lines.append("")
+    lines.append(
+        "1. **The volatility exit.** The contract's exit rule is driven by an EWMA of "
+        "absolute returns measured on every price tick it observes. A fifteen-minute bar "
+        "series does not reproduce that, so the rule is not simulated here. It fired once "
+        "in the live run, and it is on chain with its transaction hash."
+    )
+    lines.append(
+        "2. **The chain's own fee estimator.** The contract measures fees swap by swap "
+        "inside a rolling window; the backtest measures the same fees out of bars over the "
+        "same window length. Same observable, same threshold, same rule — a different "
+        "resolution, so the two estimators will not agree bar for bar."
+    )
+    lines.append("")
     lines.append("## How to reproduce")
     lines.append("")
     lines.append("```bash")
     lines.append("cd agent")
     lines.append(f"python -m helm_agent.data --days 45 --out data/base_eth_usdc_15m.jsonl --pool {pool_address} --bucket {bar_seconds}")
-    lines.append(f"python -m helm_agent.train --history data/base_eth_usdc_15m.jsonl --min-trade-bps {min_trade_bps}")
+    lines.append(f"python -m helm_agent.train --history data/base_eth_usdc_15m.jsonl --min-trade-bps {min_trade_bps} --lp-min-bps {lp_min_bps} --lp-max-bps {lp_max_bps}")
     lines.append("```")
     lines.append("")
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -284,6 +462,54 @@ def main(argv: list[str] | None = None) -> int:
         type=int,
         default=1000,
         help="the smallest allocation change worth trading, the same threshold the vault enforces",
+    )
+    parser.add_argument(
+        "--lp-min-bps",
+        type=int,
+        default=0,
+        help="the lower bound of the user's envelope, the same bound the vault enforces",
+    )
+    parser.add_argument(
+        "--lp-max-bps",
+        type=int,
+        default=4000,
+        help="the upper bound of the user's envelope, the same bound the vault enforces",
+    )
+    parser.add_argument(
+        "--windows",
+        type=int,
+        default=4,
+        help="how many consecutive windows the evaluation region is split into",
+    )
+    parser.add_argument(
+        "--wide-lp-min-bps",
+        type=int,
+        default=1000,
+        help="the lower bound of the wider envelope used for the sensitivity comparison",
+    )
+    parser.add_argument(
+        "--wide-lp-max-bps",
+        type=int,
+        default=6000,
+        help="the upper bound of the wider envelope used for the sensitivity comparison",
+    )
+    parser.add_argument(
+        "--min-fee-edge-bps",
+        type=int,
+        default=50,
+        help="the contract's economic veto: how much better the fee yield must be than lending",
+    )
+    parser.add_argument(
+        "--observation-window-sec",
+        type=int,
+        default=3600,
+        help="the contract's fee observation window, the same one it uses on chain",
+    )
+    parser.add_argument(
+        "--min-observation-sec",
+        type=int,
+        default=60,
+        help="how long the contract must observe the market before it trusts its own fee estimate (60 s on the live enforcer)",
     )
     parser.add_argument(
         "--smoothing-hours",
@@ -357,8 +583,13 @@ def main(argv: list[str] | None = None) -> int:
         lending_apr_bps=args.lending_apr_bps,
         capital_usd=args.capital_usd,
         rebalance_cost_bps=args.rebalance_cost_bps,
+        lp_min_bps=args.lp_min_bps,
+        lp_max_bps=args.lp_max_bps,
         horizon_hours=args.allocation_horizon_hours,
         min_trade_bps=args.min_trade_bps,
+        observation_window_sec=args.observation_window_sec,
+        min_fee_edge_bps=args.min_fee_edge_bps,
+        min_observation_sec=args.min_observation_sec,
     )
     for name, result in results.items():
         print(
@@ -367,6 +598,98 @@ def main(argv: list[str] | None = None) -> int:
             f"maxdd {result.max_drawdown * 100:6.2f}%  trades {result.trades}",
             flush=True,
         )
+
+    print(
+        f"the same model with a wider envelope "
+        f"({args.wide_lp_min_bps}–{args.wide_lp_max_bps} bps), for comparison",
+        flush=True,
+    )
+    wide_results = run_backtest(
+        bars,
+        model,
+        dataset,
+        lending_apr_bps=args.lending_apr_bps,
+        capital_usd=args.capital_usd,
+        rebalance_cost_bps=args.rebalance_cost_bps,
+        lp_min_bps=args.wide_lp_min_bps,
+        lp_max_bps=args.wide_lp_max_bps,
+        horizon_hours=args.allocation_horizon_hours,
+        min_trade_bps=args.min_trade_bps,
+    )
+    wide_model = wide_results["model"]
+    print(
+        f"  {'model (wide)':15s} return {wide_model.total_return * 100:7.2f}%  "
+        f"trades {wide_model.trades}",
+        flush=True,
+    )
+
+    print(f"scoring the evaluation region in {args.windows} consecutive windows", flush=True)
+    windows = run_windowed_backtest(
+        bars,
+        model,
+        dataset,
+        lending_apr_bps=args.lending_apr_bps,
+        capital_usd=args.capital_usd,
+        rebalance_cost_bps=args.rebalance_cost_bps,
+        lp_min_bps=args.lp_min_bps,
+        lp_max_bps=args.lp_max_bps,
+        horizon_hours=args.allocation_horizon_hours,
+        min_trade_bps=args.min_trade_bps,
+        window_count=args.windows,
+        observation_window_sec=args.observation_window_sec,
+        min_fee_edge_bps=args.min_fee_edge_bps,
+        min_observation_sec=args.min_observation_sec,
+    )
+    for window in windows:
+        strategies = window["strategies"]
+        print(
+            f"  window {window['index']}: {window['days']:.1f}d "
+            f"price {window['priceChange'] * 100:+7.2f}%  "
+            f"Helm {strategies['model_contract']['total_return'] * 100:+7.2f}%  "
+            f"model {strategies['model']['total_return'] * 100:+7.2f}%  "
+            f"best-rate-now {strategies['best_rate_now']['total_return'] * 100:+7.2f}%  "
+            f"all-lending {strategies['all_lending']['total_return'] * 100:+7.2f}%",
+            flush=True,
+        )
+
+    # How often the contract's own economic veto would have fired on the real pool, over
+    # the out-of-sample region. This is the number that says whether the veto is doing
+    # anything at all, so it belongs in the report rather than in a comment.
+    split = int(len(dataset) * 0.7)
+    bar_index = {bar.timestamp: i for i, bar in enumerate(bars)}
+    start_bar = bar_index.get(dataset.timestamps[split], 0)
+    end_bar = bar_index.get(dataset.timestamps[-1], len(bars) - 1)
+    horizon_bars = max(1, int(round(args.allocation_horizon_hours / bar_seconds)))
+    end_bar = min(len(bars) - 1, end_bar + horizon_bars)
+    aprs = contract_fee_apr_series(
+        bars,
+        observation_window_sec=args.observation_window_sec,
+        min_observation_sec=args.min_observation_sec,
+    )[start_bar : end_bar + 1]
+    measured = [a for a in aprs if a > 0]
+    veto_bars = sum(
+        1
+        for a in aprs
+        if a <= 0 or a < args.lending_apr_bps + args.min_fee_edge_bps
+    )
+    fee_summary = {
+        "minFeeEdgeBps": args.min_fee_edge_bps,
+        "lendingAprBps": args.lending_apr_bps,
+        "observationWindowSec": args.observation_window_sec,
+        "minObservationSec": args.min_observation_sec,
+        "bars": len(aprs),
+        "measuredFraction": len(measured) / max(1, len(aprs)),
+        "vetoFraction": veto_bars / max(1, len(aprs)),
+        "belowLendingFraction": sum(1 for a in aprs if 0 < a < args.lending_apr_bps) / max(1, len(aprs)),
+        "medianAprBps": sorted(measured)[len(measured) // 2] if measured else 0.0,
+        "maxAprBps": max(measured) if measured else 0.0,
+    }
+    print(
+        f"the contract's veto would have fired in {fee_summary['vetoFraction'] * 100:.0f}% of "
+        f"the evaluation window (median measured fee yield "
+        f"{fee_summary['medianAprBps']:.0f} bps)",
+        flush=True,
+    )
 
     metrics = {
         "trainedAt": int(time.time()),
@@ -390,6 +713,20 @@ def main(argv: list[str] | None = None) -> int:
         "minTradeBps": args.min_trade_bps,
         "report": report.to_json(),
         "strategies": {name: result.to_json() for name, result in results.items()},
+        "envelope": {
+            "lpMinBps": args.lp_min_bps,
+            "lpMaxBps": args.lp_max_bps,
+            "wideLpMinBps": args.wide_lp_min_bps,
+            "wideLpMaxBps": args.wide_lp_max_bps,
+        },
+        "economicParams": {
+            "minFeeEdgeBps": args.min_fee_edge_bps,
+            "observationWindowSec": args.observation_window_sec,
+            "minObservationSec": args.min_observation_sec,
+        },
+        "wideModel": wide_model.to_json(),
+        "feeSummary": fee_summary,
+        "windows": windows,
         "model": {
             "allocation": float(np.mean([results["model"].average_allocation])),
             "mean": dataset.mean.tolist(),
@@ -428,6 +765,11 @@ def main(argv: list[str] | None = None) -> int:
         fee_bps,
         bar_seconds,
         args.min_trade_bps,
+        args.lp_min_bps,
+        args.lp_max_bps,
+        windows,
+        wide_model,
+        fee_summary,
     )
     print(f"benchmark written to {args.benchmark_out}", flush=True)
     print(f"done in {time.time() - started:.1f}s", flush=True)

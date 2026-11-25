@@ -17,6 +17,7 @@ import { fileURLToPath } from "node:url";
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repoRoot = path.resolve(appRoot, "..");
 const outDir = path.join(appRoot, "data");
+const publicDir = path.join(appRoot, "public");
 
 const files = [
   ["deployments/base-sepolia.json", "base-sepolia.json"],
@@ -39,4 +40,18 @@ for (const [from, to] of files) {
     // state for it and says so on the page.
     console.warn(`skipped ${from}: ${error.message}`);
   }
+}
+
+// The demo video is committed once, at `docs/helm-demo.mp4`. The hosted build copies it
+// into `public/` so the submission can link to a stable URL instead of to a raw file
+// host. The copy is build output; the committed file is the source of truth.
+await mkdir(publicDir, { recursive: true });
+try {
+  await copyFile(
+    path.join(repoRoot, "docs", "helm-demo.mp4"),
+    path.join(publicDir, "helm-demo.mp4"),
+  );
+  console.log("copied docs/helm-demo.mp4 -> public/helm-demo.mp4");
+} catch (error) {
+  console.warn(`skipped docs/helm-demo.mp4: ${error.message}`);
 }

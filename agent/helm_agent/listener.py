@@ -394,7 +394,16 @@ class Agent:
                     f"{self.predict(history)['allocation']:.3f} LP)",
                     flush=True,
                 )
-                entry = self.handle_cycle(request, history, llm_timeout_sec=llm_timeout_sec)
+                try:
+                    entry = self.handle_cycle(request, history, llm_timeout_sec=llm_timeout_sec)
+                except chain_mod.ChainError as exc:
+                    # One failed chain read must not end the process. The live agent died once
+                    # on a Lasna TLS drop in the middle of a cycle; the contract wrote that
+                    # cycle off on its own, which is the safe outcome, but there is no reason
+                    # for the agent to stop answering every cycle after it.
+                    print(f"cycle {request.cycle_id}: chain read failed ({exc}); carrying on", flush=True)
+                    time.sleep(self.poll_interval_sec)
+                    continue
                 answered.add(request.cycle_id)
                 handled += 1
                 self.reconcile(entry, wait_sec=reconcile_wait)

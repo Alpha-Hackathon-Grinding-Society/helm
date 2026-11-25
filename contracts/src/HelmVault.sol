@@ -243,8 +243,12 @@ contract HelmVault is AbstractCallback {
         if (lpValue > 0) {
             lpPool.withdrawLiquidity(address(this));
         }
-        uint256 lendingValue = lendingPool.balanceOf(address(this));
-        uint256 need = amount > lendingValue ? amount - lendingValue : 0;
+        // Top the idle balance up to the amount being withdrawn. The earlier version compared the
+        // amount with the *lending* balance and withdrew only the shortfall, which left the vault
+        // with nothing to transfer whenever the position was fully lent out — every withdrawal
+        // reverted. The test that covers this path is in `test/HelmVault.t.sol`.
+        uint256 idle = asset.balanceOf(address(this));
+        uint256 need = amount > idle ? amount - idle : 0;
         if (need > 0) {
             lendingPool.withdraw(need);
         }

@@ -41,3 +41,6 @@ notes/
 
 # build output: the dashboard copies the committed artefacts here before the build
 dashboard/data/
+dashboard/public/helm-demo.mp4
+.vercel
+.env*

@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -371,6 +372,26 @@ def write_markdown(records: list[dict], deployment: dict, path: Path) -> None:
     rebalanced = [r for r in records if r["rebalanced"]]
     opened_lp = [r for r in rebalanced if r["rebalanced"]["lpShareBps"] > 0]
     no_trade = [r for r in records if r["noTrade"]]
+    expired = [r for r in records if r["expired"] and not r["posted"]]
+
+    # The longest run of consecutive cycle ids that were written off unanswered. This is the
+    # window where no agent was running; it is reported rather than trimmed.
+    runs: list[list[dict]] = []
+    current: list[dict] = []
+    for record in expired:
+        if current and record["cycleId"] != current[-1]["cycleId"] + 1:
+            runs.append(current)
+            current = []
+        current.append(record)
+    if current:
+        runs.append(current)
+    gap = max(runs, key=len) if runs else []
+
+    def opened_utc(record: dict) -> str:
+        ts = (record.get("opened") or {}).get("openedAt")
+        if not ts:
+            return "unknown time"
+        return datetime.fromtimestamp(float(ts), tz=timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     lines: list[str] = []
     add = lines.append
@@ -392,7 +413,23 @@ def write_markdown(records: list[dict], deployment: dict, path: Path) -> None:
     add(f"* **Rebalances that moved funds:** {len(rebalanced)} (of which {len(opened_lp)} opened a liquidity position)")
     add(f"* **Autonomous exits (contract acted without the model):** {len(exits)}")
     add(f"* **No-trades (move below the minimum trade):** {len(no_trade)}")
+    add(f"* **Cycles written off unanswered:** {len(expired)}")
+    if gap:
+        add(
+            f"* **The longest unanswered run:** {len(gap)} cycles, "
+            f"{gap[0]['cycleId']}–{gap[-1]['cycleId']}, from {opened_utc(gap[0])} to {opened_utc(gap[-1])}"
+        )
     add("")
+    if gap:
+        add(
+            f"The {len(gap)} cycles from {opened_utc(gap[0])} to {opened_utc(gap[-1])} were opened "
+            "while the agent was offline. The enforcer kept opening cycles on its cron subscription "
+            "and wrote each one off when the freshness window closed: no proposal, no callback that "
+            "moved funds, no manual intervention. That is the designed failure mode — the model is an "
+            "input, not a dependency. The run is left in the record rather than trimmed, because it is "
+            "the clearest evidence that the contract stays safe when the AI is not there."
+        )
+        add("")
 
     add("## The loop, leg by leg")
     add("")

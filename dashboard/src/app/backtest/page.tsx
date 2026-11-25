@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const LABELS: Record<string, string> = {
-  model: "Helm (the model)",
+  model_contract: "Helm (model + contract rules)",
+  model: "Helm (model alone)",
   best_rate_now: "Best rate now",
   static_50_50: "Static 50/50",
   all_lending: "All lending",
@@ -15,14 +16,22 @@ const LABELS: Record<string, string> = {
 };
 
 const COLORS: Record<string, string> = {
-  model: "#e8eaed",
+  model_contract: "#e8eaed",
+  model: "#e0a340",
   best_rate_now: "#9aa3af",
   static_50_50: "#646d7a",
   all_lending: "#6fbf8b",
   all_lp: "#4a9eff",
 };
 
-const ORDER = ["model", "best_rate_now", "static_50_50", "all_lending", "all_lp"];
+const ORDER = [
+  "model_contract",
+  "model",
+  "best_rate_now",
+  "static_50_50",
+  "all_lending",
+  "all_lp",
+];
 
 function pct(value: number, digits = 2): string {
   return `${(value * 100).toFixed(digits)}%`;
@@ -42,7 +51,11 @@ export default async function BacktestPage() {
     );
   }
 
-  const model = metrics.strategies.model as StrategyMetrics | undefined;
+  // The deployed system is the model plus the contract's own rules; the model on its
+  // own is shown next to it so the effect of those rules is visible rather than claimed.
+  const model =
+    (metrics.strategies.model_contract as StrategyMetrics | undefined) ??
+    (metrics.strategies.model as StrategyMetrics | undefined);
   const baseline = metrics.strategies.best_rate_now as StrategyMetrics | undefined;
   const series: Series[] = ORDER.filter((name) => metrics.strategies[name]).map((name) => ({
     key: name,
@@ -53,6 +66,8 @@ export default async function BacktestPage() {
 
   const gap = model && baseline ? baseline.total_return - model.total_return : 0;
   const wins = model && baseline ? model.total_return >= baseline.total_return : false;
+  const lending = metrics.strategies.all_lending as StrategyMetrics | undefined;
+  const lendingGap = model && lending ? lending.total_return - model.total_return : 0;
 
   return (
     <>
@@ -189,8 +204,9 @@ export default async function BacktestPage() {
                 {wins ? (
                   <>
                     <strong>Helm beats best rate now by {pct(-gap)} over the evaluation
-                    window.</strong> The margin is small enough that it should be read as
-                    &ldquo;not worse&rdquo; rather than as a claim of alpha.
+                    window.</strong> The baseline trades {baseline.trades} times and pays $
+                    {baseline.rebalance_cost.toFixed(0)} of costs to do it; Helm traded{" "}
+                    {model.trades} times and paid ${model.rebalance_cost.toFixed(0)}.
                   </>
                 ) : (
                   <>
@@ -201,6 +217,20 @@ export default async function BacktestPage() {
                   </>
                 )}
               </div>
+              {model && lending && lendingGap > 0 ? (
+                <div className="note warn" style={{ marginTop: "var(--space-3)" }}>
+                  <strong>
+                    And Helm loses to doing nothing by {pct(lendingGap)} over the same
+                    window.
+                  </strong>{" "}
+                  Leaving the money in the lending pool returned{" "}
+                  {pct(lending.total_return)}; Helm returned {pct(model.total_return)}. The
+                  price fell 22.41% across this window, and a liquidity position pays an
+                  impermanent-loss tax exactly when the price moves against it. That number
+                  is in the report, on this page and in the README, because a backtest that
+                  only publishes its wins is not a backtest.
+                </div>
+              ) : null}
               <ol className="plain-list" style={{ marginTop: "var(--space-4)" }}>
                 <li>
                   <strong>The baseline has no lag.</strong> The moment the fee yield

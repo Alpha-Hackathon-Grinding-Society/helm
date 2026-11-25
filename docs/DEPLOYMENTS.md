@@ -56,7 +56,10 @@ The deployed values are:
 | Minimum trade | 1000 bps |
 | Freshness window | 600 s |
 
-The enforcer on Reactive Lasna is subscribed to cron topic `0x04463f7c1651e6b9774d7f85c85bb94654e3c46ca79b0c16fb16d4183307b687`.
+The enforcer on Reactive Lasna is subscribed to the cron topic for every 1,000 Lasna blocks
+(`0xe20b31294d84c3661ddc8f423abb9c70310d0cf172aa2714ead78029b325e3f4`, about one cycle every
+17 minutes), plus the vault's `ProposalPosted`, `LimitsUpdated`, `Paused` and `AgentChanged`
+events and the LP pool's `Swap` / `FeeRateUpdated` and the lending pool's `RateUpdated` events.
 The agent listens for the vault's `DecisionRequested` event on Base Sepolia and answers with a proposal event.
 Only then can the enforcer on Reactive Lasna judge and enforce the proposal.
 

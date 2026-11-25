@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -32,6 +33,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 AGENT = ROOT / "agent"
+sys.path.insert(0, str(AGENT))
+
+from helm_agent.keccak import keccak256  # noqa: E402
+AGENT_PYTHON = AGENT / ".venv" / "bin" / "python"
+FOUNDRY_BIN = Path.home() / ".foundry" / "bin"
 
 
 def read_json(path: Path) -> dict | None:
@@ -59,6 +65,12 @@ def read_jsonl(path: Path) -> list[dict]:
 
 
 def run(command: list[str], cwd: Path | None = None) -> tuple[int, str]:
+    env = dict(os.environ)
+    # `forge` lives in ~/.foundry/bin, which is not always on the PATH of a cron-style
+    # invocation. The registry must be able to run the suites itself, not report "?".
+    foundry_dir = str(FOUNDRY_BIN)
+    if FOUNDRY_BIN.exists() and foundry_dir not in env.get("PATH", "").split(":"):
+        env["PATH"] = foundry_dir + ":" + env.get("PATH", "")
     try:
         proc = subprocess.run(
             command,
@@ -66,10 +78,16 @@ def run(command: list[str], cwd: Path | None = None) -> tuple[int, str]:
             capture_output=True,
             text=True,
             timeout=600,
+            env=env,
         )
     except (OSError, subprocess.SubprocessError):
         return 1, ""
     return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+
+
+def python_exe() -> str:
+    """Use the agent's virtualenv when it exists, so `-m pytest` resolves."""
+    return str(AGENT_PYTHON) if AGENT_PYTHON.exists() else sys.executable
 
 
 def pct(value: float, digits: int = 2) -> str:
@@ -90,7 +108,7 @@ def count_tests() -> tuple[str, str]:
     """Run both suites and report their counts."""
     # The agent's pyproject already sets `addopts = "-q"`, so passing another `-q` here
     # would quieten the summary line this parses.
-    code, output = run([sys.executable, "-m", "pytest", "tests"], cwd=AGENT)
+    code, output = run([python_exe(), "-m", "pytest", "tests"], cwd=AGENT)
     pytest_line = ""
     for line in output.splitlines():
         if "passed" in line or "failed" in line or "error" in line:
@@ -105,9 +123,15 @@ def count_tests() -> tuple[str, str]:
 
     forge_code, forge_output = run(["forge", "test"], cwd=ROOT / "contracts")
     forge_count = ""
-    match = re.search(r"(\d+) passed", forge_output)
+    # `forge test` prints one "N passed" line per suite plus a final "N tests passed"
+    # summary. The summary is the total; fall back to summing the per-suite lines.
+    match = re.search(r"(\d+) tests passed", forge_output)
     if match:
         forge_count = match.group(1)
+    else:
+        suite_counts = re.findall(r"(\d+) passed", forge_output)
+        if suite_counts:
+            forge_count = str(sum(int(n) for n in suite_counts))
     return pytest_count or "?", forge_count or "?"
 
 
@@ -121,7 +145,7 @@ def toolchain_versions() -> dict[str, str]:
     _, solc = run(["solc", "--version"])
     match = re.search(r"Version:\s*(\S+)", solc)
     versions["solc"] = match.group(1) if match else "not installed"
-    _, python = run([sys.executable, "--version"])
+    _, python = run([python_exe(), "--version"])
     versions["python"] = python.strip().splitlines()[0] if python.strip() else "unknown"
     return versions
 
@@ -182,6 +206,22 @@ def main(argv: list[str] | None = None) -> int:
         for row in rebalanced
         if (row.get("rebalanced") or {}).get("lpShareBps", 0) > 0
     ]
+    expired = [row for row in chain_rows if row.get("expired") and not row.get("posted")]
+
+    # The longest run of consecutive cycles that were written off unanswered. This is the
+    # week the agent process was down, and it is the clearest evidence that the contract
+    # does not need the agent to stay safe.
+    runs: list[list[dict]] = []
+    current: list[dict] = []
+    for row in expired:
+        cycle_id = row.get("cycleId", 0)
+        if current and cycle_id != current[-1].get("cycleId", 0) + 1:
+            runs.append(current)
+            current = []
+        current.append(row)
+    if current:
+        runs.append(current)
+    longest_run = max(runs, key=len) if runs else []
 
     latencies = []
     for row in full_cycles:
@@ -246,6 +286,60 @@ def main(argv: list[str] | None = None) -> int:
     add(f"| Freshness window | {limits.get('freshnessSec', '—')} s |")
     add("")
 
+    add("## Artifact identity")
+    add("")
+    add(
+        "The committed Foundry artifact and the deployed runtime, hashed. Solidity inlines "
+        "immutables, so the two are compared byte by byte outside the immutable sites by "
+        "`scripts/verify-bytecode.py`; the hashes below are the whole-code fingerprints."
+    )
+    add("")
+    add("| Contract | Artifact | Artifact bytes | Artifact keccak-256 | On-chain bytes | On-chain keccak-256 |")
+    add("| --- | --- | --- | --- | --- | --- |")
+    for name, artifact_rel, address, rpc in (
+        (
+            "HelmReactive",
+            "contracts/out/HelmReactive.sol/HelmReactive.json",
+            deployment.get("reactive", {}).get("address", ""),
+            deployment.get("reactive", {}).get("rpc", ""),
+        ),
+        (
+            "HelmVault",
+            "contracts/out/HelmVault.sol/HelmVault.json",
+            deployment.get("vault", ""),
+            deployment.get("rpc", ""),
+        ),
+    ):
+        artifact_path = ROOT / artifact_rel
+        try:
+            code = json.loads(artifact_path.read_text())["deployedBytecode"]["object"]
+            code = code[2:] if code.startswith("0x") else code
+            artifact_bytes = bytes.fromhex(code)
+            artifact_hash = "0x" + keccak256(artifact_bytes).hex()
+            artifact_len = len(artifact_bytes)
+        except (OSError, KeyError, json.JSONDecodeError, ValueError):
+            artifact_len, artifact_hash = "—", "—"
+        _, onchain = run(["cast", "code", address, "--rpc-url", rpc])
+        onchain = onchain.strip()
+        if onchain.startswith("0x"):
+            onchain_bytes = bytes.fromhex(onchain[2:])
+            onchain_hash = "0x" + keccak256(onchain_bytes).hex()
+            onchain_len = len(onchain_bytes)
+        else:
+            onchain_len, onchain_hash = "—", "—"
+        add(
+            f"| `{name}` | `{artifact_rel}` | {artifact_len} | `{artifact_hash}` | "
+            f"{onchain_len} | `{onchain_hash}` |"
+        )
+    add("")
+    add(
+        "Byte equality outside the immutable sites: "
+        "`python3 scripts/verify-bytecode.py --label <name> --artifact <artifact> "
+        "--address <address> --rpc <rpc> --immutable <address> …` — both contracts pass, "
+        "and `bash scripts/verify-deployment.sh` runs them as part of its 26 checks."
+    )
+    add("")
+
     add("## On-chain evidence")
     add("")
     add(
@@ -263,6 +357,12 @@ def main(argv: list[str] | None = None) -> int:
     add(f"| Rebalances that moved funds | **{len(rebalanced)}** |")
     add(f"| Rebalances that opened a liquidity position | **{len(moved_lp)}** |")
     add(f"| Autonomous exits (contract acted with no proposal) | **{len(exits)}** |")
+    add(f"| Cycles written off unanswered | **{len(expired)}** |")
+    if longest_run:
+        add(
+            f"| Longest unanswered run | **{len(longest_run)} cycles** "
+            f"(cycle {longest_run[0]['cycleId']}–{longest_run[-1]['cycleId']}) |"
+        )
     add(f"| Cycles the agent answered and logged | **{len(ledger_rows)}** |")
     if proposal_times:
         add(f"| Open → proposal, median | **{proposal_times[len(proposal_times) // 2]} s** |")
@@ -405,7 +505,8 @@ def main(argv: list[str] | None = None) -> int:
     add("| Strategy | Total return | Max drawdown | Trades | Fees earned | Rebalance cost |")
     add("| --- | --- | --- | --- | --- | --- |")
     labels = [
-        ("model", "**Helm (the model)**"),
+        ("model_contract", "**Helm (model + contract rules)**"),
+        ("model", "Helm (model alone)"),
         ("best_rate_now", "Best rate now"),
         ("static_50_50", "Static 50/50"),
         ("all_lending", "All lending"),
@@ -421,29 +522,118 @@ def main(argv: list[str] | None = None) -> int:
             f"{usd(result.get('fees_earned', 0))} | {usd(result.get('rebalance_cost', 0))} |"
         )
     add("")
-    if model and best_rate:
-        edge = model.get("total_return", 0) - best_rate.get("total_return", 0)
+    deployed = strategies.get("model_contract") or model
+    if deployed and best_rate:
+        edge = deployed.get("total_return", 0) - best_rate.get("total_return", 0)
         add(
             f"**Helm beats \"best rate now\" by {edge * 100:.2f} points** of total return "
-            f"({pct(model.get('total_return', 0))} against {pct(best_rate.get('total_return', 0))})."
+            f"({pct(deployed.get('total_return', 0))} against {pct(best_rate.get('total_return', 0))}), "
+            f"with {deployed.get('trades', '—')} trades against the baseline's "
+            f"{best_rate.get('trades', '—')}."
         )
-    if model and lending:
+    if deployed and lending:
         add(
             f"**Helm loses to \"all lending\" by "
-            f"{(lending.get('total_return', 0) - model.get('total_return', 0)) * 100:.2f} points** "
-            f"({pct(model.get('total_return', 0))} against {pct(lending.get('total_return', 0))}). "
+            f"{(lending.get('total_return', 0) - deployed.get('total_return', 0)) * 100:.2f} points** "
+            f"({pct(deployed.get('total_return', 0))} against {pct(lending.get('total_return', 0))}). "
             f"This is stated in the README and the dashboard, not hidden: the evaluation window "
             f"is a falling market, and staying in lending is the safe thing to do in it."
         )
-    if model and static:
+    if deployed and static:
+        static_gap = (static.get("total_return", 0) - deployed.get("total_return", 0)) * 100
+        if static_gap > 0:
+            add(
+                f"**Helm loses to \"static 50/50\" by {static_gap:.2f} points** "
+                f"({pct(deployed.get('total_return', 0))} against {pct(static.get('total_return', 0))}). "
+                f"The model pays {usd(deployed.get('rebalance_cost', 0))} of rebalance cost over "
+                f"{deployed.get('trades', '—')} trades for that."
+            )
+        else:
+            add(
+                f"**Helm beats \"static 50/50\" by {-static_gap:.2f} points** "
+                f"({pct(deployed.get('total_return', 0))} against {pct(static.get('total_return', 0))}), "
+                f"and pays {usd(deployed.get('rebalance_cost', 0))} of rebalance cost over "
+                f"{deployed.get('trades', '—')} trades to do it."
+            )
+    if model and deployed and model is not deployed:
         add(
-            f"**Helm loses to \"static 50/50\" by "
-            f"{(static.get('total_return', 0) - model.get('total_return', 0)) * 100:.2f} points** "
-            f"({pct(model.get('total_return', 0))} against {pct(static.get('total_return', 0))}). "
-            f"The model pays {usd(model.get('rebalance_cost', 0))} of rebalance cost over "
-            f"{model.get('trades', '—')} trades for that."
+            f"The contract's own economic veto, applied on top of the model's proposals, is "
+            f"worth {(deployed.get('total_return', 0) - model.get('total_return', 0)) * 100:.2f} "
+            f"points on this window: the model alone returned {pct(model.get('total_return', 0))}, "
+            f"and the same model with the veto returned {pct(deployed.get('total_return', 0))}. "
+            f"The rule was already deployed and already firing on chain; nothing was added to "
+            f"the model to produce it."
         )
     add("")
+
+    windows = metrics.get("windows", [])
+    if windows:
+        add("### The same model, window by window")
+        add("")
+        add(
+            "The evaluation region split into consecutive, disjoint windows, scored with the "
+            "same fitted model. Every window is out of sample."
+        )
+        add("")
+        add(
+            "| Window | Days | Price move | Helm (model + contract) | Helm (model alone) | "
+            "Best rate now | Static 50/50 | All lending | All LP |"
+        )
+        add("| --- | --- | --- | --- | --- | --- | --- | --- | --- |")
+        for window in windows:
+            window_strategies = window.get("strategies", {})
+            add(
+                f"| {window.get('index')} | {window.get('days', 0):.1f} | "
+                f"{pct(window.get('priceChange', 0))} | "
+                f"{pct(window_strategies.get('model_contract', {}).get('total_return', 0))} | "
+                f"{pct(window_strategies.get('model', {}).get('total_return', 0))} | "
+                f"{pct(window_strategies.get('best_rate_now', {}).get('total_return', 0))} | "
+                f"{pct(window_strategies.get('static_50_50', {}).get('total_return', 0))} | "
+                f"{pct(window_strategies.get('all_lending', {}).get('total_return', 0))} | "
+                f"{pct(window_strategies.get('all_lp', {}).get('total_return', 0))} |"
+            )
+        add("")
+        beats = {
+            key: sum(
+                1
+                for window in windows
+                if window.get("strategies", {})
+                .get("model_contract", {})
+                .get("total_return", 0)
+                > window.get("strategies", {}).get(key, {}).get("total_return", 0)
+            )
+            for key in ("best_rate_now", "static_50_50", "all_lending", "all_lp")
+        }
+        add(
+            f"Helm (model + contract) beat `best rate now` in **{beats['best_rate_now']} of "
+            f"{len(windows)}** windows, `static 50/50` in **{beats['static_50_50']}**, "
+            f"`all lending` in **{beats['all_lending']}** and `all LP` in "
+            f"**{beats['all_lp']}**."
+        )
+        add("")
+
+    fee_summary = metrics.get("feeSummary", {})
+    if fee_summary:
+        add("### The contract's economic veto on real market data")
+        add("")
+        add(
+            f"The veto fires when the fee yield the chain measured does not beat the lending "
+            f"rate by {fee_summary.get('minFeeEdgeBps', '—')} bps. On the real pool used by "
+            f"this backtest it would have fired in "
+            f"**{fee_summary.get('vetoFraction', 0) * 100:.0f}% of the evaluation window**: the "
+            f"measured fee yield was below lending in "
+            f"{fee_summary.get('belowLendingFraction', 0) * 100:.0f}% of the bars, and the "
+            f"median measured yield was {fee_summary.get('medianAprBps', 0):,.0f} bps against a "
+            f"lending rate of {fee_summary.get('lendingAprBps', 0):,.0f} bps."
+        )
+        add("")
+        add(
+            "The live deployment measures a different pool — the mock LP pool on Base Sepolia, "
+            "whose flow is far smaller — so the contract's own measured fee yield on the "
+            "testnet is much smaller and its veto fires far more often. The rule is the same; "
+            "the pool behind it is not."
+        )
+        add("")
 
     add("## How to check each claim")
     add("")

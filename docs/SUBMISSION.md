@@ -2,13 +2,11 @@
 
 ## Still to fill
 
-- [ ] **Live app URL** — the dashboard URL has not been published yet.
 - [ ] **Repository revision submitted** — this is filled at submission time from the submitted public Git commit.
-- [ ] **Demo video URL** — the demo video has not been hosted yet.
 - [ ] **Builder profile URL** — the owner still has to supply the DoraHacks builder profile URL.
 
 The fields below are the text to paste into the submission form.
-The three hosted-link fields marked below must not be submitted in that state.
+The two fields marked below must not be submitted in that state.
 
 ## Project name
 
@@ -25,7 +23,7 @@ Helm keeps your stablecoins earning under limits you set once: a neural network 
 Stablecoin funds have to be split between lending and liquidity provision, and today's best rate can be wrong by the next hour.
 Helm uses an off-chain neural network to propose the split, then puts the proposal through a reactive contract that applies the user's limits before any funds move.
 The enforcer runs on Reactive Lasna and reaches a vault on Base Sepolia through Reactive callbacks.
-The evidence is live: the generated chain record contains 61 full cycles, 60 proposals clamped by the contract, 4 rebalances that moved test funds and 1 autonomous exit with no model proposal.
+The evidence is live: the generated chain record contains 798 cycles opened on chain, 168 of them full cycles, 167 proposals clamped by the contract, 4 rebalances that moved test funds and 1 autonomous exit with no model proposal.
 The backtest is also reported against simple alternatives, including the cases where Helm loses.
 
 ### Long description
@@ -80,12 +78,13 @@ It can also act without the model: if observed volatility breaches the approved 
 #### The on-chain proof
 
 `scripts/collect-evidence.py` reads the two chains and writes `docs/EVIDENCE.md` and `agent/ledger/chain-events.jsonl` from the same pass.
-The generated record contains 75 cycles opened on Reactive Lasna, of which 61 are full cycles.
-It contains 60 proposals clamped by the contract, 30 proposals stopped by the economic veto and 1 proposal refused before execution.
+The generated record contains 798 cycles opened on Reactive Lasna, of which 168 are full cycles.
+It contains 167 proposals clamped by the contract, 137 proposals stopped by the economic veto and 1 proposal refused before execution.
 There are 4 rebalances that moved test funds, of which 2 opened a liquidity position, and 1 autonomous exit with no model proposal.
-The median open-to-proposal latency is 33 s and the median open-to-enforced latency is 33 s; the worst observed times are 514 s and 513 s respectively.
+629 cycles were written off unanswered; the longest run is 586 consecutive cycles (182–767, 2026-11-17 15:18 UTC → 2026-11-24 20:47 UTC), the week the agent process was down. During that week the enforcer kept opening cycles and closed each one with no proposal and no funds moved — the contract stayed safe without the AI, which is the point of the design.
+The median open-to-proposal latency is 36 s and the median open-to-enforced latency is 35 s; the worst observed times are 582 s and 582 s respectively.
 
-The generated claims registry records 30 passing Foundry tests and 46 passing Python tests.
+The generated claims registry records 37 passing Foundry tests and 46 passing Python tests.
 The live deployment verifier is `bash scripts/verify-deployment.sh`; it checks the addresses, wiring, envelope, deployed bytecode, callback funding, Reactive reserve and evidence record, and exits non-zero on any mismatch.
 
 #### The backtest, including where Helm loses
@@ -95,18 +94,26 @@ The comparison uses the same capital, lending rate and rebalance cost for each s
 
 | Strategy | Total return | Max drawdown | Trades | Fees earned | Rebalance cost |
 | --- | --- | --- | --- | --- | --- |
-| Helm (the model) | -7.62% | -8.71% | 266 | $127.11 | $2,658.44 |
+| Helm (model + contract rules) | -4.26% | -5.09% | 144 | $69.59 | $2,083.18 |
+| Helm (model alone) | -4.91% | -6.06% | 126 | $91.68 | $1,077.16 |
 | Best rate now | -19.18% | -20.14% | 303 | $182.67 | $13,825.23 |
 | Static 50/50 | -5.68% | -8.06% | 0 | $129.02 | $0.00 |
 | All lending | 0.16% | 0.00% | 0 | $0.00 | $0.00 |
 | All LP | -11.52% | -16.01% | 0 | $258.03 | $0.00 |
 
-Helm beats the best-rate-now strategy by 11.56 percentage points of total return on this window.
+Helm beats the best-rate-now strategy by 14.91 percentage points of total return on this
+window, and it does so in each of the four consecutive disjoint windows the evaluation
+region was split into.
 That is not the whole result.
-Helm loses to all lending by 7.79 points and to static 50/50 by 1.95 points.
-The evaluated window is a falling market, so remaining in lending is the safer result on these rows.
-Helm's 266 trades also cost $2,658.44 in rebalance cost.
-The submission therefore makes no claim that the model beats every simple alternative or that it demonstrates savings.
+Helm loses to all lending by 4.43 points.
+Helm's 144 trades cost $2,083.18 in rebalance cost, and that is most of the 1.41 points
+it wins against static 50/50.
+The evaluated window is a falling market, so remaining in lending is the safer result on
+these rows.
+The contract's own economic veto, applied on top of the model's proposals, is worth 0.64
+points: the model alone returned -4.91%, and the same model with the veto returned -4.26%.
+The submission therefore makes no claim that the model beats every simple alternative or
+that it demonstrates savings.
 
 #### Safety
 
@@ -139,7 +146,7 @@ Filled at submission time from the submitted public Git commit.
 
 ## Live app URL
 
-TO BE FILLED AT SUBMISSION
+https://helm-dashboard-six.vercel.app
 
 ## Contract addresses
 
@@ -169,7 +176,11 @@ Cycle 2 on Base Sepolia moved test funds into a 4000 bps liquidity position.
 
 ## Demo video URL
 
-TO BE FILLED AT SUBMISSION
+https://helm-dashboard-six.vercel.app/helm-demo.mp4
+
+The video is 164.92 seconds (2 min 45 s), silent, and is a screen recording of the live
+dashboard and the Reactive transaction that clamped a proposal. The committed file is
+`docs/helm-demo.mp4` and the recorder that made it is `scripts/demo-video.mjs`.
 
 ## Builder profile URL
 
@@ -209,6 +220,7 @@ The separate autonomous-exit evidence is the enforcer transaction on Reactive La
 - Helm is testnet only; there is no mainnet deployment.
 - The lending pool and the LP position are mocks, not integrations with a real lending market or a real liquidity position.
 - The market data in the demo is replayed from real Base mainnet history while the contract execution is live on Base Sepolia.
-- On the evaluated window, the model loses to both always lending and static 50/50.
+- On the evaluated window, the model loses to always lending; it beats static 50/50 by
+  less than its own rebalance cost.
 - The code is unaudited.
 - This submission does not claim adoption, demand or savings.
